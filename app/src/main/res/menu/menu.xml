@@ -9,6 +9,10 @@
             android:title="Settings">
     </item>
     <item
+        android:id="@+id/menu_location_settings"
+        android:title="Location">
+</item>
+    <item
             android:id="@+id/menu_exit"
             android:title="Exit">
     </item>

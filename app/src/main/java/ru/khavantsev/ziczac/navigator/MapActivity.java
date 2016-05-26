@@ -47,14 +47,12 @@ public class MapActivity extends AppCompatActivity {
                 Log.d(LOG_TAG, location.toString());
             }
         };
-        IntentFilter intFilt = new IntentFilter(GpsDataService.LOCATION_BROADCAST_ACTION);
-        registerReceiver(br, intFilt);
+
     }
 
 
     @Override
     protected void onDestroy() {
-        unregisterReceiver(br);
         stopService(new Intent(this, GpsDataService.class));
         super.onDestroy();
     }
@@ -72,10 +70,15 @@ public class MapActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
+            case R.id.menu_location_settings:
+                startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                break;
+            case R.id.menu_points:
+                startActivity(new Intent(this, PointsActivity.class));
+                break;
             case R.id.menu_settings:
-                Intent intent = new Intent(this, SettingsActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(this, SettingsActivity.class));
                 break;
             case R.id.menu_exit:
                 finish();
@@ -86,11 +89,13 @@ public class MapActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
+        registerReceiver(br, new IntentFilter(GpsDataService.LOCATION_BROADCAST_ACTION));
         super.onResume();
     }
 
     @Override
     protected void onPause() {
+        unregisterReceiver(br);
         super.onPause();
     }
 
@@ -130,10 +135,4 @@ public class MapActivity extends AppCompatActivity {
                 location.getLatitude(), location.getLongitude(), new Date(
                         location.getTime()));
     }
-
-    public void onClickLocationSettings(View view) {
-        startActivity(new Intent(
-                android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-    }
-
 }

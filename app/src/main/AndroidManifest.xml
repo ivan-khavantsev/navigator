@@ -26,6 +26,12 @@
                 android:enabled="true"
                 android:exported="true">
         </service>
+
+        <activity
+                android:name=".PointsActivity"
+                android:label="@string/title_activity_points"
+                android:theme="@style/AppTheme.NoActionBar">
+        </activity>
     </application>
 
 </manifest>

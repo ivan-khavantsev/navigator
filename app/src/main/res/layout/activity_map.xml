@@ -13,53 +13,32 @@
                 android:orientation="vertical">
 
 
-    <TextView
-            android:id="@+id/pointDataLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/point_data"
-            android:textSize="26sp">
-    </TextView>
-    <TextView
-            android:id="@+id/pointData"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="22sp">
-    </TextView>
-    <TextView
-            android:id="@+id/tvTitleGPS"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/provider_gps"
-            android:textSize="26sp">
-    </TextView>
-    <TextView
-            android:id="@+id/tvEnabledGPS"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="22sp">
-    </TextView>
-    <TextView
-            android:id="@+id/tvStatusGPS"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="22sp">
-    </TextView>
-    <TextView
-            android:id="@+id/tvLocationGPS"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="22sp">
-    </TextView>
-    <Button
-            android:id="@+id/btnLocationSettings"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:onClick="onClickLocationSettings"
-            android:text="@string/location_settings">
-    </Button>
-
+            <TextView
+                    android:id="@+id/pointDataLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/point_data"
+                    android:textSize="26sp">
+            </TextView>
+            <TextView
+                    android:id="@+id/pointData"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="22sp">
+            </TextView>
+            <TextView
+                    android:id="@+id/tvTitleGPS"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/provider_gps"
+                    android:textSize="26sp">
+            </TextView>
+            <TextView
+                    android:id="@+id/tvLocationGPS"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="22sp">
+            </TextView>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
