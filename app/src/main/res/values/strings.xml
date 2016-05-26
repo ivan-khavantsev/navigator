@@ -4,4 +4,14 @@
     <string name="provider_network">Network</string>
     <string name="location_settings">Location settings</string>
     <string name="point_data">Point data</string>
+
+
+    <string-array name="calculation_method_entries">
+        <item>Lexo</item>
+        <item>Ortho</item>
+    </string-array>
+    <string-array name="calculation_method_values">
+        <item>lexo</item>
+        <item>ortho</item>
+    </string-array>
 </resources>

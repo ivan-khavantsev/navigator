@@ -1,81 +1,98 @@
 package ru.khavantsev.ziczac.navigator;
 
+import android.content.*;
 import android.hardware.GeomagneticField;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Date;
 
 public class MapActivity extends AppCompatActivity {
 
+    public static final String LOG_TAG = MapActivity.class.toString();
+
+    private SharedPreferences sp;
+    private BroadcastReceiver br;
+
+    private TextView tvLocationGPS;
+    private TextView pointData;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
-        tvEnabledGPS = (TextView) findViewById(R.id.tvEnabledGPS);
-        tvStatusGPS = (TextView) findViewById(R.id.tvStatusGPS);
-        tvLocationGPS = (TextView) findViewById(R.id.tvLocationGPS);
 
+        tvLocationGPS = (TextView) findViewById(R.id.tvLocationGPS);
         pointData = (TextView) findViewById(R.id.pointData);
 
-        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        sp = PreferenceManager.getDefaultSharedPreferences(this);
+        sp.edit().clear().apply(); // DEBUG
+
+        startService(new Intent(this, GpsDataService.class));
+
+        br = new BroadcastReceiver() {
+            public void onReceive(Context context, Intent intent) {
+                Location location = intent.getParcelableExtra(GpsDataService.LOCATION_BROADCAST_EXTRA_NAME);
+                showLocation(location);
+                Log.d(LOG_TAG, location.toString());
+            }
+        };
+        IntentFilter intFilt = new IntentFilter(GpsDataService.LOCATION_BROADCAST_ACTION);
+        registerReceiver(br, intFilt);
     }
 
 
-    TextView tvEnabledGPS;
-    TextView tvStatusGPS;
-    TextView tvLocationGPS;
-    TextView pointData;
+    @Override
+    protected void onDestroy() {
+        unregisterReceiver(br);
+        stopService(new Intent(this, GpsDataService.class));
+        super.onDestroy();
+    }
 
-    private LocationManager locationManager;
-    StringBuilder sbGPS = new StringBuilder();
-    StringBuilder sbNet = new StringBuilder();
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.menu_settings:
+                Intent intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.menu_exit:
+                finish();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     protected void onResume() {
         super.onResume();
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                1000 * 10, 10, locationListener);
-        checkEnabled();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        locationManager.removeUpdates(locationListener);
     }
-
-    private LocationListener locationListener = new LocationListener() {
-
-        @Override
-        public void onLocationChanged(Location location) {
-            showLocation(location);
-        }
-
-        @Override
-        public void onProviderDisabled(String provider) {
-            checkEnabled();
-        }
-
-        @Override
-        public void onProviderEnabled(String provider) {
-            checkEnabled();
-            showLocation(locationManager.getLastKnownLocation(provider));
-        }
-
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-            if (provider.equals(LocationManager.GPS_PROVIDER)) {
-                tvStatusGPS.setText("Status: " + String.valueOf(status));
-            }
-        }
-    };
 
     private void showLocation(Location location) {
         if (location == null)
@@ -114,17 +131,9 @@ public class MapActivity extends AppCompatActivity {
                         location.getTime()));
     }
 
-    private void checkEnabled() {
-        tvEnabledGPS.setText("Enabled: "
-                + locationManager
-                .isProviderEnabled(LocationManager.GPS_PROVIDER));
-    }
-
     public void onClickLocationSettings(View view) {
         startActivity(new Intent(
                 android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
     }
-
-    ;
 
 }

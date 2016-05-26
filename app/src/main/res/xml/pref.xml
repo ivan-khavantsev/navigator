@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+        xmlns:android="http://schemas.android.com/apk/res/android">
+    <CheckBoxPreference
+            android:key="declination"
+            android:summary="Use magnetic declination to show azimuth"
+            android:title="Declination">
+    </CheckBoxPreference>
+    <ListPreference
+            android:entries="@array/calculation_method_entries"
+            android:entryValues="@array/calculation_method_values"
+            android:key="calculation_method"
+            android:summary="Select method of calculation distance and azumuth"
+            android:defaultValue="lexo"
+            android:title="Calculation method">
+    </ListPreference>
+</PreferenceScreen>
