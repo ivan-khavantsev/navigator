@@ -1,4 +1,4 @@
-package ru.khavantsev.ziczac.navigator;
+package ru.khavantsev.ziczac.navigator.service;
 
 import android.app.Service;
 import android.content.Intent;

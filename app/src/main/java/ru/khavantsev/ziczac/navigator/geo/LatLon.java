@@ -1,8 +1,8 @@
-package ru.khavantsev.ziczac.navigator;
+package ru.khavantsev.ziczac.navigator.geo;
 
 
 public class LatLon {
-    LatLon(double latitude, double longitude) {
+    public LatLon(double latitude, double longitude) {
         this.latitude = latitude;
         this.longitude = longitude;
     }

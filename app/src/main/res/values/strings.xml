@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Navigator</string>
+    <string name="app_name">ZicZac</string>
     <string name="provider_gps">GPS</string>
     <string name="provider_network">Network</string>
     <string name="location_settings">Location settings</string>

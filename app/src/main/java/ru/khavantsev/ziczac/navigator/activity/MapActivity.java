@@ -1,4 +1,4 @@
-package ru.khavantsev.ziczac.navigator;
+package ru.khavantsev.ziczac.navigator.activity;
 
 import android.content.*;
 import android.hardware.GeomagneticField;
@@ -6,14 +6,15 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
+import ru.khavantsev.ziczac.navigator.R;
+import ru.khavantsev.ziczac.navigator.geo.GeoCalc;
+import ru.khavantsev.ziczac.navigator.geo.LatLon;
+import ru.khavantsev.ziczac.navigator.service.GpsDataService;
 
 import java.util.Date;
 

@@ -1,4 +1,4 @@
-package ru.khavantsev.ziczac.navigator;
+package ru.khavantsev.ziczac.navigator.geo;
 
 import static java.lang.Math.*;
 

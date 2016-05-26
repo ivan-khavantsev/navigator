@@ -1,8 +1,8 @@
-package ru.khavantsev.ziczac.navigator;
+package ru.khavantsev.ziczac.navigator.activity;
 
 import android.preference.PreferenceActivity;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import ru.khavantsev.ziczac.navigator.R;
 
 public class SettingsActivity extends PreferenceActivity {
 
