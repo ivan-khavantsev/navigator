@@ -5,6 +5,13 @@
     <string name="location_settings">Location settings</string>
     <string name="point_data">Point data</string>
 
+    <string name="title_activity_points">Points</string>
+    <string name="dialog_point_add_text">Point data</string>
+    <string name="button_ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="dialog_point_add_name_hint">Name</string>
+    <string name="dialog_point_add_lat_hint">Latitude</string>
+    <string name="dialog_point_add_lon_hint">Longitude</string>
 
     <string-array name="calculation_method_entries">
         <item>Lexo</item>
@@ -14,5 +21,4 @@
         <item>lexo</item>
         <item>ortho</item>
     </string-array>
-    <string name="title_activity_points">PointsActivity</string>
 </resources>

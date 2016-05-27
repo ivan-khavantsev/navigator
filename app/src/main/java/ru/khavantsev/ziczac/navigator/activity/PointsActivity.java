@@ -1,5 +1,6 @@
 package ru.khavantsev.ziczac.navigator.activity;
 
+import android.app.DialogFragment;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -11,12 +12,14 @@ import android.util.Log;
 import android.view.View;
 import ru.khavantsev.ziczac.navigator.R;
 import ru.khavantsev.ziczac.navigator.db.DBHelper;
+import ru.khavantsev.ziczac.navigator.dialog.PointAddDialog;
 
 public class PointsActivity extends AppCompatActivity {
 
     public static final String LOG_TAG = PointsActivity.class.toString();
 
     DBHelper dbHelper;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,18 +28,20 @@ public class PointsActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.add_point);
-        fab.setOnClickListener(new View.OnClickListener() {
+        dbHelper = new DBHelper(this);
+
+        FloatingActionButton addPintButton = (FloatingActionButton) findViewById(R.id.add_point);
+        addPintButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                DialogFragment dlg1 = new PointAddDialog();
+                dlg1.setCancelable(false);
+                dlg1.show(getFragmentManager(), "dlg1");
             }
         });
 
-        dbHelper = new DBHelper(this);
-    }
 
+    }
 
     @Override
     protected void onResume() {
@@ -51,7 +56,6 @@ public class PointsActivity extends AppCompatActivity {
             int lonColIndex = c.getColumnIndex("lon");
 
             do {
-                // получаем значения по номерам столбцов и пишем все в лог
                 Log.d(LOG_TAG,
                         "ID = " + c.getInt(idColIndex) +
                                 ", name = " + c.getString(nameColIndex) +
@@ -59,11 +63,11 @@ public class PointsActivity extends AppCompatActivity {
                                 ", lon = " + c.getString(lonColIndex));
             } while (c.moveToNext());
 
-            super.onResume();
         } else {
             Log.d(LOG_TAG, "Empty database");
         }
         c.close();
+        db.close();
         super.onResume();
     }
 
