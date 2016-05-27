@@ -8,12 +8,18 @@ import ru.khavantsev.ziczac.navigator.db.model.Point;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.database.sqlite.SQLiteDatabase.CONFLICT_REPLACE;
+
 
 public class PointService extends Service {
 
     public static final String LOG_TAG = PointService.class.toString();
     public static final String POINTS_TABLE_NAME = "points";
 
+    public static final String ATTRIBUTE_NAME_ID = "id";
+    public static final String ATTRIBUTE_NAME_NAME = "name";
+    public static final String ATTRIBUTE_NAME_LAT = "lat";
+    public static final String ATTRIBUTE_NAME_LON = "lon";
 
     public List<Point> getPoints() {
         List<Point> points = new ArrayList<>();
@@ -23,10 +29,10 @@ public class PointService extends Service {
         Cursor c = db.query("points", null, null, null, null, null, null);
         if (c.moveToFirst()) {
 
-            int idColIndex = c.getColumnIndex("id");
-            int nameColIndex = c.getColumnIndex("name");
-            int latColIndex = c.getColumnIndex("lat");
-            int lonColIndex = c.getColumnIndex("lon");
+            int idColIndex = c.getColumnIndex(ATTRIBUTE_NAME_ID);
+            int nameColIndex = c.getColumnIndex(ATTRIBUTE_NAME_NAME);
+            int latColIndex = c.getColumnIndex(ATTRIBUTE_NAME_LAT);
+            int lonColIndex = c.getColumnIndex(ATTRIBUTE_NAME_LON);
 
             do {
                 Point point = new Point();
@@ -45,13 +51,20 @@ public class PointService extends Service {
         return points;
     }
 
-    public void savePoint(Point point){
+    public void savePoint(Point point) {
         ContentValues cv = new ContentValues();
-        cv.put("name", point.name);
-        cv.put("lat", point.lat);
-        cv.put("lon", point.lon);
+
+        cv.put(ATTRIBUTE_NAME_ID, point.id);
+        cv.put(ATTRIBUTE_NAME_NAME, point.name);
+        cv.put(ATTRIBUTE_NAME_LAT, point.lat);
+        cv.put(ATTRIBUTE_NAME_LON, point.lon);
 
         SQLiteDatabase db = getDBHelper().getWritableDatabase();
-        long rowID = db.insert(POINTS_TABLE_NAME, null, cv);
+        long rowID = db.insertWithOnConflict(POINTS_TABLE_NAME, null, cv, CONFLICT_REPLACE);
+    }
+
+    public void deletePoint(int id) {
+        SQLiteDatabase db = getDBHelper().getWritableDatabase();
+        db.delete(POINTS_TABLE_NAME, ATTRIBUTE_NAME_ID + " = " + id, null);
     }
 }

@@ -4,7 +4,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-
+    <TextView
+            android:id="@+id/stubPointId"
+            android:visibility="invisible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
     <TextView
             android:id="@+id/tvPointName"
             android:layout_width="wrap_content"
@@ -32,4 +36,13 @@
             android:text=""
             android:textSize="18sp">
     </TextView>
+    <TextView
+        android:id="@+id/tvPointAzimuth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="10dp"
+        android:text=""
+        android:textSize="18sp">
+</TextView>
 </LinearLayout>
