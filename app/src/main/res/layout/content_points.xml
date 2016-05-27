@@ -13,4 +13,9 @@
         tools:showIn="@layout/activity_points"
         tools:context=".activity.PointsActivity">
 
+        <ListView
+                android:id="@+id/lvPoints"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+        </ListView>
 </RelativeLayout>

@@ -5,21 +5,31 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import ru.khavantsev.ziczac.navigator.R;
 import ru.khavantsev.ziczac.navigator.db.DBHelper;
+import ru.khavantsev.ziczac.navigator.db.model.Point;
+import ru.khavantsev.ziczac.navigator.db.service.PointService;
 import ru.khavantsev.ziczac.navigator.dialog.PointAddDialog;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class PointsActivity extends AppCompatActivity {
 
     public static final String LOG_TAG = PointsActivity.class.toString();
 
-    DBHelper dbHelper;
-
+    ListView lvPoints;
+    SimpleAdapter sAdapter;
+    ArrayList<Map<String, Object>> data;
+    Map<String, Object> m;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,8 +37,6 @@ public class PointsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_points);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        dbHelper = new DBHelper(this);
 
         FloatingActionButton addPintButton = (FloatingActionButton) findViewById(R.id.add_point);
         addPintButton.setOnClickListener(new View.OnClickListener() {
@@ -39,36 +47,31 @@ public class PointsActivity extends AppCompatActivity {
                 dlg1.show(getFragmentManager(), "dlg1");
             }
         });
-
-
+        loadPoints();
     }
 
-    @Override
-    protected void onResume() {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
+    final String ATTRIBUTE_NAME_NAME = "name";
+    final String ATTRIBUTE_NAME_LAT = "lat";
+    final String ATTRIBUTE_NAME_LON = "lon";
 
-        Cursor c = db.query("points", null, null, null, null, null, null);
-        if (c.moveToFirst()) {
+    private void loadPoints() {
 
-            int idColIndex = c.getColumnIndex("id");
-            int nameColIndex = c.getColumnIndex("name");
-            int latColIndex = c.getColumnIndex("lat");
-            int lonColIndex = c.getColumnIndex("lon");
+        PointService ps = new PointService();
+        List<Point> points = ps.getPoints();
 
-            do {
-                Log.d(LOG_TAG,
-                        "ID = " + c.getInt(idColIndex) +
-                                ", name = " + c.getString(nameColIndex) +
-                                ", lat = " + c.getString(latColIndex) +
-                                ", lon = " + c.getString(lonColIndex));
-            } while (c.moveToNext());
-
-        } else {
-            Log.d(LOG_TAG, "Empty database");
+        data = new ArrayList<>();
+        for (Point p : points) {
+            m = new HashMap<>();
+            m.put(ATTRIBUTE_NAME_NAME, p.name);
+            m.put(ATTRIBUTE_NAME_LAT, p.lat);
+            m.put(ATTRIBUTE_NAME_LON, p.lon);
+            data.add(m);
         }
-        c.close();
-        db.close();
-        super.onResume();
-    }
+        String[] from = {ATTRIBUTE_NAME_NAME, ATTRIBUTE_NAME_LAT, ATTRIBUTE_NAME_LON};
+        int[] to = {R.id.tvPointName, R.id.tvPointLat, R.id.tvPointLon};
+        sAdapter = new SimpleAdapter(this, data, R.layout.point_item, from, to);
 
+        lvPoints = (ListView) findViewById(R.id.lvPoints);
+        lvPoints.setAdapter(sAdapter);
+    }
 }
