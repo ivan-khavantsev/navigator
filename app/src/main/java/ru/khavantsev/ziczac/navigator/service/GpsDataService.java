@@ -8,16 +8,19 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.util.Log;
 
 import java.util.concurrent.TimeUnit;
 
 public class GpsDataService extends Service {
 
-    private static final String LOG_TAG = GpsDataService.class.toString();
     public static final String LOCATION_BROADCAST_ACTION = "ru.khavantsev.ziczac.navigator.locationbroadcast";
     public static final String LOCATION_BROADCAST_EXTRA_LOCATION = "location";
     public static final String LOCATION_BROADCAST_EXTRA_DECLINATION = "declination";
+    private static final float GPS_MIN_DISTANCE = 5;
+    private static final long GPS_MIN_TIME = 1000 * 10; //Millisecond
+    private static final long BROADCAST_PERIOD = 1; //Second
+
+
     private boolean inWork = false;
 
 
@@ -54,8 +57,7 @@ public class GpsDataService extends Service {
 
     public int onStartCommand(Intent intent, int flags, int startId) {
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                1000 * 10, 10, locationListener);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, GPS_MIN_TIME, GPS_MIN_DISTANCE, locationListener);
         inWork = true;
         someTask();
         return super.onStartCommand(intent, flags, startId);
@@ -71,13 +73,12 @@ public class GpsDataService extends Service {
 
         new Thread(new Runnable() {
             public void run() {
-                while (true){
+                while (true) {
                     if (!inWork) {
-                        Log.d(LOG_TAG, "Stopped");
                         break;
                     }
                     try {
-                        if(lastLocation != null){
+                        if (lastLocation != null) {
                             Intent intent = new Intent(LOCATION_BROADCAST_ACTION);
                             intent.putExtra(LOCATION_BROADCAST_EXTRA_LOCATION, lastLocation);
 
@@ -92,7 +93,7 @@ public class GpsDataService extends Service {
 
                             sendBroadcast(intent);
                         }
-                        TimeUnit.SECONDS.sleep(3);
+                        TimeUnit.SECONDS.sleep(BROADCAST_PERIOD);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }

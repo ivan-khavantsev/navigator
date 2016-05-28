@@ -56,12 +56,10 @@ public class DecimalInputTextWatcher implements TextWatcher {
     }
 
     private boolean isValid(String s) {
-        Pattern patternWithDot = Pattern.compile("-?[0-9]{0,"+ mDigitsBeforeZero+"}((\\.[0-9]{0," + mDigitsAfterZero + "})?)||(\\.)?");
-        Pattern patternWithComma = Pattern.compile("-?[0-9]{0,"+ mDigitsBeforeZero+"}((,[0-9]{0," + mDigitsAfterZero + "})?)||(,)?");
+        Pattern patternWithDot = Pattern.compile("-?[0-9]{0," + mDigitsBeforeZero + "}((\\.[0-9]{0," + mDigitsAfterZero + "})?)||(\\.)?");
 
         Matcher matcherDot = patternWithDot.matcher(s);
-        Matcher matcherComa = patternWithComma.matcher(s);
 
-        return matcherDot.matches() || matcherComa.matches();
+        return matcherDot.matches();
     }
 }

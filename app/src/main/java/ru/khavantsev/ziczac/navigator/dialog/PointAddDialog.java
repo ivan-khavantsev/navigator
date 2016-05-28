@@ -1,10 +1,7 @@
 package ru.khavantsev.ziczac.navigator.dialog;
 
 import android.app.DialogFragment;
-import android.content.DialogInterface;
-import android.location.Location;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -16,13 +13,11 @@ import ru.khavantsev.ziczac.navigator.db.model.Point;
 import ru.khavantsev.ziczac.navigator.db.service.PointService;
 import ru.khavantsev.ziczac.navigator.filter.DecimalInputTextWatcher;
 
-import java.util.Date;
-
 public class PointAddDialog extends DialogFragment implements OnClickListener {
 
-    EditText etName;
-    EditText etLat;
-    EditText etLon;
+    private EditText etName;
+    private EditText etLat;
+    private EditText etLon;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

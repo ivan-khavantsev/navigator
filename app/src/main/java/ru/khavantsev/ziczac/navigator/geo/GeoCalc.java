@@ -2,7 +2,6 @@ package ru.khavantsev.ziczac.navigator.geo;
 
 import static java.lang.Math.*;
 
-
 public class GeoCalc {
 
     private static final double RADIUS = 6372795;
@@ -96,7 +95,7 @@ public class GeoCalc {
     }
 
     public static double toRealAzimuth(double radians, float declination){
-        return (((Math.toDegrees(radians) + 360.0) % 360.0) + declination);
+        return (((Math.toDegrees(radians) + 360.0) % 360.0) - declination);
     }
 
 }
