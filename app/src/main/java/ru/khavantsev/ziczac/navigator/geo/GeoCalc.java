@@ -5,7 +5,7 @@ import static java.lang.Math.*;
 
 public class GeoCalc {
 
-    public static final double RADIUS = 6372795;
+    private static final double RADIUS = 6372795;
 
     public static double orthodromeAzimuth(LatLon LatLon1, LatLon LatLon2) {
         double deltaLong = toRadians(LatLon2.longitude - LatLon1.longitude);
@@ -95,8 +95,8 @@ public class GeoCalc {
         return Math.round(radians * RADIUS);
     }
 
-    public static double toRealAzimuth(double radians){
-        return (Math.toDegrees(radians) + 360.0) % 360.0;
+    public static double toRealAzimuth(double radians, float declination){
+        return (((Math.toDegrees(radians) + 360.0) % 360.0) + declination);
     }
 
 }

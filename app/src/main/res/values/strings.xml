@@ -12,6 +12,8 @@
     <string name="dialog_point_add_name_hint">Name</string>
     <string name="dialog_point_add_lat_hint">Latitude</string>
     <string name="dialog_point_add_lon_hint">Longitude</string>
+    <string name="meters">m</string>
+    <string name="degrees">°</string>
 
     <string-array name="calculation_method_entries">
         <item>Lexo</item>

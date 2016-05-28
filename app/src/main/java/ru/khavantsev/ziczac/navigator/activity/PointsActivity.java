@@ -1,11 +1,9 @@
 package ru.khavantsev.ziczac.navigator.activity;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
+import android.content.*;
 import android.location.Location;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -28,27 +26,29 @@ import java.util.*;
 
 public class PointsActivity extends AppCompatActivity implements PointListener {
 
-    public static final String LOG_TAG = PointsActivity.class.toString();
-    public static final int CM_DELETE_ID = 1;
+    private static final int CM_DELETE_ID = 1;
 
-    public static final String ATTRIBUTE_AZIMUTH = "azimuth";
-    public static final String ATTRIBUTE_DISTANCE = "distance";
+    private static final String ATTRIBUTE_AZIMUTH = "azimuth";
+    private static final String ATTRIBUTE_DISTANCE = "distance";
 
-    public static final String POINT_DIALOG_TAG = "Point";
-
-    ListView lvPoints;
-    SimpleAdapter sAdapter;
-    ArrayList<Map<String, Object>> data;
-
+    private static final String POINT_DIALOG_TAG = "Point";
+    private ListView lvPoints;
+    private SimpleAdapter sAdapter;
+    private ArrayList<Map<String, Object>> data;
+    private SharedPreferences sp;
     private BroadcastReceiver br;
     private Location lastLocation;
+    private float lastDeclination;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sp = PreferenceManager.getDefaultSharedPreferences(this);
+
         setContentView(R.layout.activity_points);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
 
         FloatingActionButton addPintButton = (FloatingActionButton) findViewById(R.id.add_point);
         addPintButton.setOnClickListener(new View.OnClickListener() {
@@ -78,7 +78,8 @@ public class PointsActivity extends AppCompatActivity implements PointListener {
 
         br = new BroadcastReceiver() {
             public void onReceive(Context context, Intent intent) {
-                lastLocation = intent.getParcelableExtra(GpsDataService.LOCATION_BROADCAST_EXTRA_NAME);
+                lastLocation = intent.getParcelableExtra(GpsDataService.LOCATION_BROADCAST_EXTRA_LOCATION);
+                lastDeclination = intent.getFloatExtra(GpsDataService.LOCATION_BROADCAST_EXTRA_DECLINATION, 0);
                 LatLon selfLatLon = new LatLon(lastLocation.getLatitude(), lastLocation.getLongitude());
                 if (data != null) {
                     for (int i = 0; i < data.size(); i++) {
@@ -89,7 +90,8 @@ public class PointsActivity extends AppCompatActivity implements PointListener {
                             pointLatLon.latitude = Double.parseDouble((String) pointItem.get(PointService.ATTRIBUTE_NAME_LAT));
                             pointLatLon.longitude = Double.parseDouble((String) pointItem.get(PointService.ATTRIBUTE_NAME_LON));
 
-                            double azimuth = GeoCalc.toRealAzimuth(GeoCalc.rhumbAzimuth(selfLatLon, pointLatLon));
+                            float usesDeclination = (sp.getBoolean("declination", false)) ? lastDeclination : 0; // If settings set use declination else not use
+                            double azimuth = GeoCalc.toRealAzimuth(GeoCalc.rhumbAzimuth(selfLatLon, pointLatLon), usesDeclination);
                             pointItem.put(ATTRIBUTE_AZIMUTH, Math.round(azimuth));
 
                             double distance = GeoCalc.toRealDistance(GeoCalc.rhumbDistance(selfLatLon, pointLatLon));

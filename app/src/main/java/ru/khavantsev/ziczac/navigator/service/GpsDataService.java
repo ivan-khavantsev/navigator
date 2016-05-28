@@ -14,9 +14,10 @@ import java.util.concurrent.TimeUnit;
 
 public class GpsDataService extends Service {
 
-    public static final String LOG_TAG = GpsDataService.class.toString();
+    private static final String LOG_TAG = GpsDataService.class.toString();
     public static final String LOCATION_BROADCAST_ACTION = "ru.khavantsev.ziczac.navigator.locationbroadcast";
-    public static final String LOCATION_BROADCAST_EXTRA_NAME = "location";
+    public static final String LOCATION_BROADCAST_EXTRA_LOCATION = "location";
+    public static final String LOCATION_BROADCAST_EXTRA_DECLINATION = "declination";
     private boolean inWork = false;
 
 
@@ -78,7 +79,7 @@ public class GpsDataService extends Service {
                     try {
                         if(lastLocation != null){
                             Intent intent = new Intent(LOCATION_BROADCAST_ACTION);
-                            intent.putExtra(LOCATION_BROADCAST_EXTRA_NAME, lastLocation);
+                            intent.putExtra(LOCATION_BROADCAST_EXTRA_LOCATION, lastLocation);
 
                             GeomagneticField geoField = new GeomagneticField(
                                     Double.valueOf(lastLocation.getLatitude()).floatValue(),
@@ -87,6 +88,7 @@ public class GpsDataService extends Service {
                                     System.currentTimeMillis()
                             );
                             float declination = geoField.getDeclination();
+                            intent.putExtra(LOCATION_BROADCAST_EXTRA_DECLINATION, declination);
 
                             sendBroadcast(intent);
                         }

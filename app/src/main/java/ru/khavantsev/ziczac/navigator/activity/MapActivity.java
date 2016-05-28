@@ -1,35 +1,20 @@
 package ru.khavantsev.ziczac.navigator.activity;
 
-import android.content.*;
-import android.hardware.GeomagneticField;
-import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
+import android.content.Intent;
 import android.os.Bundle;
-import android.location.Location;
-import android.location.LocationManager;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
 import ru.khavantsev.ziczac.navigator.R;
-import ru.khavantsev.ziczac.navigator.geo.GeoCalc;
-import ru.khavantsev.ziczac.navigator.geo.LatLon;
 import ru.khavantsev.ziczac.navigator.service.GpsDataService;
 
-import java.util.Date;
-
 public class MapActivity extends AppCompatActivity {
-
-    public static final String LOG_TAG = MapActivity.class.toString();
-
-    private SharedPreferences sp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
-        sp = PreferenceManager.getDefaultSharedPreferences(this);
         startService(new Intent(this, GpsDataService.class));
     }
 
