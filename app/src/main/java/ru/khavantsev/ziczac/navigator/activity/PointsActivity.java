@@ -1,6 +1,5 @@
 package ru.khavantsev.ziczac.navigator.activity;
 
-import android.app.DialogFragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -20,25 +19,29 @@ import ru.khavantsev.ziczac.navigator.R;
 import ru.khavantsev.ziczac.navigator.db.model.Point;
 import ru.khavantsev.ziczac.navigator.db.service.PointService;
 import ru.khavantsev.ziczac.navigator.dialog.PointAddDialog;
+import ru.khavantsev.ziczac.navigator.geo.GeoCalc;
+import ru.khavantsev.ziczac.navigator.geo.LatLon;
 import ru.khavantsev.ziczac.navigator.service.GpsDataService;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.util.*;
 
-public class PointsActivity extends AppCompatActivity {
+public class PointsActivity extends AppCompatActivity implements PointListener {
 
     public static final String LOG_TAG = PointsActivity.class.toString();
     public static final int CM_DELETE_ID = 1;
 
     public static final String ATTRIBUTE_AZIMUTH = "azimuth";
+    public static final String ATTRIBUTE_DISTANCE = "distance";
+
+    public static final String POINT_DIALOG_TAG = "Point";
 
     ListView lvPoints;
     SimpleAdapter sAdapter;
     ArrayList<Map<String, Object>> data;
 
     private BroadcastReceiver br;
+    private Location lastLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,9 +54,22 @@ public class PointsActivity extends AppCompatActivity {
         addPintButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DialogFragment dlg1 = new PointAddDialog();
-                dlg1.setCancelable(false);
-                dlg1.show(getFragmentManager(), "dlg1");
+
+                PointAddDialog pointDialog = new PointAddDialog();
+                Bundle bundle = new Bundle();
+                if (lastLocation != null) {
+                    Double lat = new BigDecimal(lastLocation.getLatitude()).setScale(8, BigDecimal.ROUND_HALF_UP).doubleValue();
+                    Double lon = new BigDecimal(lastLocation.getLongitude()).setScale(8, BigDecimal.ROUND_HALF_UP).doubleValue();
+                    bundle.putString("latitude", String.valueOf(lat));
+                    bundle.putString("longitude", String.valueOf(lon));
+                }
+
+                bundle.putString("name", new Date().toString());
+                pointDialog.setArguments(bundle);
+
+
+                pointDialog.setCancelable(false);
+                pointDialog.show(getFragmentManager(), POINT_DIALOG_TAG);
             }
         });
 
@@ -62,15 +78,27 @@ public class PointsActivity extends AppCompatActivity {
 
         br = new BroadcastReceiver() {
             public void onReceive(Context context, Intent intent) {
-                Location location = intent.getParcelableExtra(GpsDataService.LOCATION_BROADCAST_EXTRA_NAME);
+                lastLocation = intent.getParcelableExtra(GpsDataService.LOCATION_BROADCAST_EXTRA_NAME);
+                LatLon selfLatLon = new LatLon(lastLocation.getLatitude(), lastLocation.getLongitude());
                 if (data != null) {
-                    for(int i = 0; i<data.size();i++){
-                        Map<String, Object> pointItem = data.get(i);
+                    for (int i = 0; i < data.size(); i++) {
+                        try {
+                            Map<String, Object> pointItem = data.get(i);
 
-                        //Get LAT,LON..etc and update fields
+                            LatLon pointLatLon = new LatLon();
+                            pointLatLon.latitude = Double.parseDouble((String) pointItem.get(PointService.ATTRIBUTE_NAME_LAT));
+                            pointLatLon.longitude = Double.parseDouble((String) pointItem.get(PointService.ATTRIBUTE_NAME_LON));
 
-                        pointItem.put(ATTRIBUTE_AZIMUTH, location.getTime());
-                        data.set(i, pointItem);
+                            double azimuth = GeoCalc.toRealAzimuth(GeoCalc.rhumbAzimuth(selfLatLon, pointLatLon));
+                            pointItem.put(ATTRIBUTE_AZIMUTH, Math.round(azimuth));
+
+                            double distance = GeoCalc.toRealDistance(GeoCalc.rhumbDistance(selfLatLon, pointLatLon));
+                            pointItem.put(ATTRIBUTE_AZIMUTH, Math.round(azimuth));
+                            pointItem.put(ATTRIBUTE_DISTANCE, Math.round(distance));
+                            data.set(i, pointItem);
+                        } catch (NumberFormatException e) {
+                            //
+                        }
                     }
                     sAdapter.notifyDataSetChanged();
                 }
@@ -94,22 +122,24 @@ public class PointsActivity extends AppCompatActivity {
             m.put(PointService.ATTRIBUTE_NAME_LAT, p.lat);
             m.put(PointService.ATTRIBUTE_NAME_LON, p.lon);
             m.put(ATTRIBUTE_AZIMUTH, "N/A");
+            m.put(ATTRIBUTE_DISTANCE, "N/A");
             data.add(m);
         }
+
         String[] from = {
-                PointService.ATTRIBUTE_NAME_ID,
                 PointService.ATTRIBUTE_NAME_NAME,
                 PointService.ATTRIBUTE_NAME_LAT,
                 PointService.ATTRIBUTE_NAME_LON,
-                ATTRIBUTE_AZIMUTH
+                ATTRIBUTE_AZIMUTH,
+                ATTRIBUTE_DISTANCE
         };
 
         int[] to = {
-                R.id.stubPointId,
                 R.id.tvPointName,
                 R.id.tvPointLat,
                 R.id.tvPointLon,
-                R.id.tvPointAzimuth
+                R.id.tvPointAzimuth,
+                R.id.tvPointDistance
         };
         sAdapter = new SimpleAdapter(this, data, R.layout.point_item, from, to);
 
@@ -132,7 +162,7 @@ public class PointsActivity extends AppCompatActivity {
             AdapterView.AdapterContextMenuInfo acmi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
             // удаляем Map из коллекции, используя позицию пункта в списке
             Map<String, Object> pointData = data.get(acmi.position);
-            int id = (Integer) pointData.get(PointService.ATTRIBUTE_NAME_ID);
+            long id = (Long) pointData.get(PointService.ATTRIBUTE_NAME_ID);
             PointService ps = new PointService();
             ps.deletePoint(id);
             data.remove(acmi.position);
@@ -155,4 +185,16 @@ public class PointsActivity extends AppCompatActivity {
         super.onPause();
     }
 
+    @Override
+    public void pointResult(Point point) {
+        HashMap<String, Object> m = new HashMap<>();
+        m.put(PointService.ATTRIBUTE_NAME_ID, point.id);
+        m.put(PointService.ATTRIBUTE_NAME_NAME, point.name);
+        m.put(PointService.ATTRIBUTE_NAME_LAT, point.lat);
+        m.put(PointService.ATTRIBUTE_NAME_LON, point.lon);
+        m.put(ATTRIBUTE_AZIMUTH, "N/A");
+        m.put(ATTRIBUTE_DISTANCE, "N/A");
+        data.add(m);
+        sAdapter.notifyDataSetChanged();
+    }
 }

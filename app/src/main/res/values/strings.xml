@@ -6,7 +6,7 @@
     <string name="point_data">Point data</string>
 
     <string name="title_activity_points">Points</string>
-    <string name="dialog_point_add_text">Point data</string>
+    <string name="title_dialog_point">Point data</string>
     <string name="button_ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="dialog_point_add_name_hint">Name</string>

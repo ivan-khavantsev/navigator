@@ -10,6 +10,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
+            android:inputType="textCapSentences"
             android:hint="@string/dialog_point_add_name_hint"
     />
 
@@ -19,6 +20,8 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
+            android:inputType="number|numberDecimal|numberSigned"
+            android:digits="0123456789.-"
             android:hint="@string/dialog_point_add_lat_hint"
     />
 
@@ -28,6 +31,8 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
+            android:inputType="number|numberDecimal|numberSigned"
+            android:digits="0123456789.-"
             android:hint="@string/dialog_point_add_lon_hint"
     />
     <LinearLayout

@@ -2,6 +2,7 @@ package ru.khavantsev.ziczac.navigator.service;
 
 import android.app.Service;
 import android.content.Intent;
+import android.hardware.GeomagneticField;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -78,6 +79,15 @@ public class GpsDataService extends Service {
                         if(lastLocation != null){
                             Intent intent = new Intent(LOCATION_BROADCAST_ACTION);
                             intent.putExtra(LOCATION_BROADCAST_EXTRA_NAME, lastLocation);
+
+                            GeomagneticField geoField = new GeomagneticField(
+                                    Double.valueOf(lastLocation.getLatitude()).floatValue(),
+                                    Double.valueOf(lastLocation.getLongitude()).floatValue(),
+                                    Double.valueOf(lastLocation.getAltitude()).floatValue(),
+                                    System.currentTimeMillis()
+                            );
+                            float declination = geoField.getDeclination();
+
                             sendBroadcast(intent);
                         }
                         TimeUnit.SECONDS.sleep(3);

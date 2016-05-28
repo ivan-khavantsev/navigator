@@ -51,19 +51,23 @@ public class PointService extends Service {
         return points;
     }
 
-    public void savePoint(Point point) {
+    public long savePoint(Point point) {
         ContentValues cv = new ContentValues();
 
-        cv.put(ATTRIBUTE_NAME_ID, point.id);
+        if (point.id != 0) {
+            cv.put(ATTRIBUTE_NAME_ID, point.id);
+        }
+
         cv.put(ATTRIBUTE_NAME_NAME, point.name);
         cv.put(ATTRIBUTE_NAME_LAT, point.lat);
         cv.put(ATTRIBUTE_NAME_LON, point.lon);
 
         SQLiteDatabase db = getDBHelper().getWritableDatabase();
         long rowID = db.insertWithOnConflict(POINTS_TABLE_NAME, null, cv, CONFLICT_REPLACE);
+        return rowID;
     }
 
-    public void deletePoint(int id) {
+    public void deletePoint(long id) {
         SQLiteDatabase db = getDBHelper().getWritableDatabase();
         db.delete(POINTS_TABLE_NAME, ATTRIBUTE_NAME_ID + " = " + id, null);
     }
