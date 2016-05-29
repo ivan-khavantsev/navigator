@@ -16,7 +16,7 @@ import ru.khavantsev.ziczac.navigator.R;
 import ru.khavantsev.ziczac.navigator.adapter.PointsAdapter;
 import ru.khavantsev.ziczac.navigator.db.model.Point;
 import ru.khavantsev.ziczac.navigator.db.service.PointService;
-import ru.khavantsev.ziczac.navigator.dialog.PointAddDialog;
+import ru.khavantsev.ziczac.navigator.dialog.PointEditDialog;
 import ru.khavantsev.ziczac.navigator.geo.GeoCalc;
 import ru.khavantsev.ziczac.navigator.geo.LatLon;
 import ru.khavantsev.ziczac.navigator.service.GpsDataService;
@@ -27,6 +27,7 @@ import java.util.*;
 public class PointsActivity extends AppCompatActivity implements PointListener {
 
     private static final int CM_DELETE_ID = 1;
+    private static final int CM_EDIT_ID = 2;
 
     private static final String ATTRIBUTE_AZIMUTH = "azimuth";
     private static final String ATTRIBUTE_DISTANCE = "distance";
@@ -34,7 +35,9 @@ public class PointsActivity extends AppCompatActivity implements PointListener {
     private static final String POINT_DIALOG_TAG = "Point";
     private ListView lvPoints;
     private PointsAdapter pointsAdapter;
+    private PointService pointService;
     private ArrayList<Map<String, Object>> data;
+    private Map<Long, Integer> pointIdListIndexMap;
     private SharedPreferences sp;
     private BroadcastReceiver br;
     private Location lastLocation;
@@ -56,7 +59,7 @@ public class PointsActivity extends AppCompatActivity implements PointListener {
             @Override
             public void onClick(View view) {
 
-                PointAddDialog pointDialog = new PointAddDialog();
+                PointEditDialog pointDialog = new PointEditDialog();
                 Bundle bundle = new Bundle();
                 if (lastLocation != null) {
                     Double lat = new BigDecimal(lastLocation.getLatitude()).setScale(8, BigDecimal.ROUND_HALF_UP).doubleValue();
@@ -107,16 +110,15 @@ public class PointsActivity extends AppCompatActivity implements PointListener {
                 }
             }
         };
-
+        pointService = new PointService();
         loadPoints();
     }
 
     private void loadPoints() {
-
-        PointService ps = new PointService();
-        List<Point> points = ps.getPoints();
+        List<Point> points = pointService.getPoints();
 
         data = new ArrayList<>();
+        pointIdListIndexMap = new HashMap<>();
         Map<String, Object> m;
         for (Point p : points) {
             m = new HashMap<>();
@@ -127,6 +129,8 @@ public class PointsActivity extends AppCompatActivity implements PointListener {
             m.put(ATTRIBUTE_AZIMUTH, "N/A");
             m.put(ATTRIBUTE_DISTANCE, "N/A");
             data.add(m);
+            int index = data.indexOf(m);
+            pointIdListIndexMap.put(p.id, index);
         }
 
         String[] from = {
@@ -154,23 +158,42 @@ public class PointsActivity extends AppCompatActivity implements PointListener {
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
+        menu.add(0, CM_EDIT_ID, 0, R.string.edit);
         menu.add(0, CM_DELETE_ID, 0, R.string.delete);
     }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
+
         if (item.getItemId() == CM_DELETE_ID) {
-            // получаем инфу о пункте списка
             AdapterView.AdapterContextMenuInfo acmi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-            // удаляем Map из коллекции, используя позицию пункта в списке
             Map<String, Object> pointData = data.get(acmi.position);
-            long id = (Long) pointData.get(PointService.ATTRIBUTE_NAME_ID);
-            PointService ps = new PointService();
-            ps.deletePoint(id);
+            long pointId = (Long) pointData.get(PointService.ATTRIBUTE_NAME_ID);
+            pointService.deletePoint(pointId);
             data.remove(acmi.position);
-            // уведомляем, что данные изменились
+            pointIdListIndexMap.remove(pointId);
             pointsAdapter.notifyDataSetChanged();
             return true;
+
+        } else if (item.getItemId() == CM_EDIT_ID) {
+
+            PointEditDialog pointDialog = new PointEditDialog();
+            Bundle bundle = new Bundle();
+
+            AdapterView.AdapterContextMenuInfo acmi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+            Map<String, Object> pointData = data.get(acmi.position);
+
+            long pointId = (Long) pointData.get(PointService.ATTRIBUTE_NAME_ID);
+            Point point = pointService.getPoint(pointId);
+
+            bundle.putLong("pointId", point.id);
+            bundle.putString("latitude", point.lat);
+            bundle.putString("longitude", point.lon);
+            bundle.putString("name", point.name);
+            pointDialog.setArguments(bundle);
+
+            pointDialog.setCancelable(false);
+            pointDialog.show(getFragmentManager(), POINT_DIALOG_TAG);
         }
         return super.onContextItemSelected(item);
     }
@@ -191,14 +214,19 @@ public class PointsActivity extends AppCompatActivity implements PointListener {
 
     @Override
     public void pointResult(Point point) {
-        HashMap<String, Object> m = new HashMap<>();
-        m.put(PointService.ATTRIBUTE_NAME_ID, point.id);
-        m.put(PointService.ATTRIBUTE_NAME_NAME, point.name);
-        m.put(PointService.ATTRIBUTE_NAME_LAT, point.lat);
-        m.put(PointService.ATTRIBUTE_NAME_LON, point.lon);
-        m.put(ATTRIBUTE_AZIMUTH, "N/A");
-        m.put(ATTRIBUTE_DISTANCE, "N/A");
-        data.add(m);
+        HashMap<String, Object> pointData = new HashMap<>();
+        pointData.put(PointService.ATTRIBUTE_NAME_ID, point.id);
+        pointData.put(PointService.ATTRIBUTE_NAME_NAME, point.name);
+        pointData.put(PointService.ATTRIBUTE_NAME_LAT, point.lat);
+        pointData.put(PointService.ATTRIBUTE_NAME_LON, point.lon);
+        pointData.put(ATTRIBUTE_AZIMUTH, "N/A");
+        pointData.put(ATTRIBUTE_DISTANCE, "N/A");
+        if (pointIdListIndexMap.containsKey(point.id)) {
+            int index = pointIdListIndexMap.get(point.id);
+            data.set(index, pointData);
+        } else {
+            data.add(pointData);
+        }
         pointsAdapter.notifyDataSetChanged();
     }
 }

@@ -13,11 +13,13 @@ import ru.khavantsev.ziczac.navigator.db.model.Point;
 import ru.khavantsev.ziczac.navigator.db.service.PointService;
 import ru.khavantsev.ziczac.navigator.filter.DecimalInputTextWatcher;
 
-public class PointAddDialog extends DialogFragment implements OnClickListener {
+public class PointEditDialog extends DialogFragment implements OnClickListener {
 
     private EditText etName;
     private EditText etLat;
     private EditText etLon;
+
+    private long pointId;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -37,19 +39,21 @@ public class PointAddDialog extends DialogFragment implements OnClickListener {
         etLon.addTextChangedListener(new DecimalInputTextWatcher(etLon, 2, 8));
         etLon.setText(getArguments().getString("longitude"));
 
+        pointId = getArguments().getLong("pointId", 0);
+
         return v;
     }
 
     public void onClick(View v) {
         if (v.getId() == R.id.btnOk) {
             Point point = new Point();
+            point.id = pointId;
             point.name = etName.getText().toString();
             point.lat = etLat.getText().toString();
             point.lon = etLon.getText().toString();
 
             PointService ps = new PointService();
-            long id = ps.savePoint(point);
-            point.id = id;
+            point.id = ps.savePoint(point);
             ((PointListener) getActivity()).pointResult(point);
         }
         dismiss();
