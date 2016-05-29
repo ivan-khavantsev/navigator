@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import ru.khavantsev.ziczac.navigator.R;
+import ru.khavantsev.ziczac.navigator.adapter.PointsAdapter;
 import ru.khavantsev.ziczac.navigator.db.model.Point;
 import ru.khavantsev.ziczac.navigator.db.service.PointService;
 import ru.khavantsev.ziczac.navigator.dialog.PointAddDialog;
@@ -33,12 +34,13 @@ public class PointsActivity extends AppCompatActivity implements PointListener {
 
     private static final String POINT_DIALOG_TAG = "Point";
     private ListView lvPoints;
-    private SimpleAdapter sAdapter;
+    private PointsAdapter pointsAdapter;
     private ArrayList<Map<String, Object>> data;
     private SharedPreferences sp;
     private BroadcastReceiver br;
     private Location lastLocation;
     private float lastDeclination;
+    private boolean usingDeclination;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +92,7 @@ public class PointsActivity extends AppCompatActivity implements PointListener {
                             pointLatLon.latitude = Double.parseDouble((String) pointItem.get(PointService.ATTRIBUTE_NAME_LAT));
                             pointLatLon.longitude = Double.parseDouble((String) pointItem.get(PointService.ATTRIBUTE_NAME_LON));
 
-                            float usesDeclination = (sp.getBoolean("declination", false)) ? lastDeclination : 0; // If settings set use declination else not use
+                            float usesDeclination = (usingDeclination) ? lastDeclination : 0; // If settings set use declination else not use
                             double azimuth = GeoCalc.toRealAzimuth(GeoCalc.rhumbAzimuth(selfLatLon, pointLatLon), usesDeclination);
                             pointItem.put(ATTRIBUTE_AZIMUTH, Math.round(azimuth));
 
@@ -102,7 +104,7 @@ public class PointsActivity extends AppCompatActivity implements PointListener {
                             //
                         }
                     }
-                    sAdapter.notifyDataSetChanged();
+                    pointsAdapter.notifyDataSetChanged();
                 }
             }
         };
@@ -143,10 +145,9 @@ public class PointsActivity extends AppCompatActivity implements PointListener {
                 R.id.tvPointAzimuth,
                 R.id.tvPointDistance
         };
-        sAdapter = new SimpleAdapter(this, data, R.layout.point_item, from, to);
+        pointsAdapter = new PointsAdapter(this, data, R.layout.point_item, from, to);
 
-
-        lvPoints.setAdapter(sAdapter);
+        lvPoints.setAdapter(pointsAdapter);
     }
 
 
@@ -169,7 +170,7 @@ public class PointsActivity extends AppCompatActivity implements PointListener {
             ps.deletePoint(id);
             data.remove(acmi.position);
             // уведомляем, что данные изменились
-            sAdapter.notifyDataSetChanged();
+            pointsAdapter.notifyDataSetChanged();
             return true;
         }
         return super.onContextItemSelected(item);
@@ -178,6 +179,8 @@ public class PointsActivity extends AppCompatActivity implements PointListener {
     @Override
     protected void onResume() {
         registerReceiver(br, new IntentFilter(GpsDataService.LOCATION_BROADCAST_ACTION));
+        usingDeclination = sp.getBoolean("declination", false);
+        pointsAdapter.setMagnetDeclinationUsing(usingDeclination);
         super.onResume();
     }
 
@@ -197,6 +200,6 @@ public class PointsActivity extends AppCompatActivity implements PointListener {
         m.put(ATTRIBUTE_AZIMUTH, "N/A");
         m.put(ATTRIBUTE_DISTANCE, "N/A");
         data.add(m);
-        sAdapter.notifyDataSetChanged();
+        pointsAdapter.notifyDataSetChanged();
     }
 }
