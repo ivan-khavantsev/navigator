@@ -12,7 +12,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import ru.khavantsev.ziczac.navigator.R;
 import ru.khavantsev.ziczac.navigator.adapter.PointsAdapter;
 import ru.khavantsev.ziczac.navigator.db.model.Point;
@@ -155,7 +154,7 @@ public class PointsActivity extends AppCompatActivity implements PointListener {
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        menu.add(0, CM_DELETE_ID, 0, "Удалить запись");
+        menu.add(0, CM_DELETE_ID, 0, R.string.delete);
     }
 
     @Override

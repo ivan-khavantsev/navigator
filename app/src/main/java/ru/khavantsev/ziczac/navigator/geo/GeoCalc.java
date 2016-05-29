@@ -19,8 +19,7 @@ public class GeoCalc {
     }
 
 
-    public static double orthodromeDistance(LatLon p1, LatLon p2)
-    {
+    public static double orthodromeDistance(LatLon p1, LatLon p2) {
         double lat1 = Math.toRadians(p1.latitude);
         double lon1 = Math.toRadians(p1.longitude);
         double lat2 = Math.toRadians(p2.latitude);
@@ -90,12 +89,12 @@ public class GeoCalc {
     }
 
 
-    public static long toRealDistance(double radians){
+    public static long toRealDistance(double radians) {
         return Math.round(radians * RADIUS);
     }
 
-    public static double toRealAzimuth(double radians, float declination){
-        return (((Math.toDegrees(radians) + 360.0) % 360.0) - declination);
+    public static double toRealAzimuth(double radians, float declination) {
+        return ((Math.toDegrees(radians) - declination + 360.0) % 360.0);
     }
 
 }

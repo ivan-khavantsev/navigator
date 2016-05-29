@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ZicZac</string>
+    <string name="app_name">Navigation</string>
     <string name="provider_gps">GPS</string>
     <string name="provider_network">Network</string>
     <string name="location_settings">Location settings</string>
@@ -14,6 +14,7 @@
     <string name="dialog_point_add_lon_hint">Longitude</string>
     <string name="meters">m</string>
     <string name="degrees">°</string>
+    <string name="delete">Delete</string>
 
     <string-array name="calculation_method_entries">
         <item>Lexo</item>
