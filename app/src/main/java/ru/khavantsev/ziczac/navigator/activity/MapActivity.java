@@ -8,7 +8,6 @@ import android.graphics.*;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SurfaceHolder;
@@ -143,6 +142,7 @@ public class MapActivity extends AppCompatActivity {
             float canvasCenterPointLeft;
             float canvasCenterPointTop;
             List<CanvasPoint> canvasPoints = new ArrayList<>();
+            Bitmap cursor1lBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.cursor1l);
             Bitmap cursorBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.cursor);
             private boolean running = false;
             private SurfaceHolder surfaceHolder;
@@ -197,13 +197,12 @@ public class MapActivity extends AppCompatActivity {
                     paint.setTextSize(18);
                     canvas.drawText(point.name, point.x, point.y - 9, paint);
 
-                   // canvas.drawLine(canvasCenterPointLeft, canvasCenterPointTop, point.x, point.y, paint);
+                    // canvas.drawLine(canvasCenterPointLeft, canvasCenterPointTop, point.x, point.y, paint);
                 }
 
+                canvas.drawBitmap(cursor1lBitmap, canvasCenterPointLeft - cursor1lBitmap.getWidth() / 2, canvasCenterPointTop - cursor1lBitmap.getHeight() / 2, paint);
                 Bitmap cursor = rotateBitmap(cursorBitmap, bearing);
-                int bw = cursor.getWidth();
-                int bh = cursor.getHeight();
-                canvas.drawBitmap(cursor, canvasCenterPointLeft - bw / 2, canvasCenterPointTop - bh / 2, paint);
+                canvas.drawBitmap(cursor, canvasCenterPointLeft - cursor.getWidth() / 2, canvasCenterPointTop - cursor.getHeight() / 2, paint);
             }
 
             void refreshLocations() {
