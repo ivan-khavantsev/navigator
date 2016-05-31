@@ -1,8 +1,8 @@
 package ru.khavantsev.ziczac.navigator.geo;
 
 public class LatLon {
-    public double latitude;
-    public double longitude;
+    public double latitude = 0;
+    public double longitude = 0;
 
     public LatLon() {
     }

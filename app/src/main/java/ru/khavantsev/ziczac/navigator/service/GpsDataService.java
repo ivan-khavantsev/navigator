@@ -20,19 +20,17 @@ public class GpsDataService extends Service {
     private static final long GPS_MIN_TIME = 1000 * 10; //Millisecond
     private static final long BROADCAST_PERIOD = 1; //Second
 
-
     private boolean inWork = false;
 
-
     private LocationManager locationManager;
-    private Location lastLocation;
+    private Location location;
 
 
     private LocationListener locationListener = new LocationListener() {
 
         @Override
         public void onLocationChanged(Location location) {
-            lastLocation = location;
+            GpsDataService.this.location = location;
         }
 
         @Override
@@ -58,6 +56,7 @@ public class GpsDataService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, GPS_MIN_TIME, GPS_MIN_DISTANCE, locationListener);
+        location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         inWork = true;
         someTask();
         return super.onStartCommand(intent, flags, startId);
@@ -78,14 +77,14 @@ public class GpsDataService extends Service {
                         break;
                     }
                     try {
-                        if (lastLocation != null) {
+                        if (location != null) {
                             Intent intent = new Intent(LOCATION_BROADCAST_ACTION);
-                            intent.putExtra(LOCATION_BROADCAST_EXTRA_LOCATION, lastLocation);
+                            intent.putExtra(LOCATION_BROADCAST_EXTRA_LOCATION, location);
 
                             GeomagneticField geoField = new GeomagneticField(
-                                    Double.valueOf(lastLocation.getLatitude()).floatValue(),
-                                    Double.valueOf(lastLocation.getLongitude()).floatValue(),
-                                    Double.valueOf(lastLocation.getAltitude()).floatValue(),
+                                    Double.valueOf(location.getLatitude()).floatValue(),
+                                    Double.valueOf(location.getLongitude()).floatValue(),
+                                    Double.valueOf(location.getAltitude()).floatValue(),
                                     System.currentTimeMillis()
                             );
                             float declination = geoField.getDeclination();
