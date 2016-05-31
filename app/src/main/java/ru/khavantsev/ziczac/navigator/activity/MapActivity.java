@@ -187,7 +187,7 @@ public class MapActivity extends AppCompatActivity {
                     refreshLocations();
                 }
 
-                paint.setColor(Color.BLUE);
+                paint.setColor(getResources().getColor(R.color.colorPrimaryDark));
                 paint.setStrokeWidth(3);
 
                 for (CanvasPoint point : canvasPoints) {
@@ -195,7 +195,7 @@ public class MapActivity extends AppCompatActivity {
 
                     paint.setTextAlign(Paint.Align.CENTER);
                     paint.setTextSize(18);
-                    canvas.drawText(point.name, point.x, point.y - 9, paint);
+                    canvas.drawText(point.name, point.x, point.y - 10, paint);
 
                     // canvas.drawLine(canvasCenterPointLeft, canvasCenterPointTop, point.x, point.y, paint);
                 }
