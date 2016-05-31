@@ -8,10 +8,7 @@ import android.graphics.*;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
+import android.view.*;
 import ru.khavantsev.ziczac.navigator.R;
 import ru.khavantsev.ziczac.navigator.db.model.Point;
 import ru.khavantsev.ziczac.navigator.db.service.PointService;
@@ -25,7 +22,7 @@ import java.util.List;
 public class MapActivity extends AppCompatActivity {
 
 
-    private double scale = 1; // meters per pixel
+    private double scale = 2; // meters per pixel
     private Location location = null;
     private boolean refreshLocation = true;
     private List<Point> points = null;
@@ -97,6 +94,29 @@ public class MapActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+            scale++;
+            return true;
+        } else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+            if (scale > 1) {
+                scale--;
+            }
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+            return true;
+        }
+        return super.onKeyUp(keyCode, event);
+    }
+
 
     private class DrawView extends SurfaceView implements SurfaceHolder.Callback {
 
@@ -187,17 +207,17 @@ public class MapActivity extends AppCompatActivity {
                     refreshLocations();
                 }
 
-                paint.setColor(getResources().getColor(R.color.colorPrimaryDark));
-                paint.setStrokeWidth(3);
-
                 for (CanvasPoint point : canvasPoints) {
+//                    paint.setStrokeWidth(2);
+//                    paint.setColor(getResources().getColor(R.color.colorBlue));
+//                    canvas.drawLine(canvasCenterPointLeft, canvasCenterPointTop, point.x, point.y, paint);
+
+                    paint.setColor(getResources().getColor(R.color.colorPrimaryDark));
                     canvas.drawCircle(point.x, point.y, 7, paint);
 
                     paint.setTextAlign(Paint.Align.CENTER);
                     paint.setTextSize(18);
                     canvas.drawText(point.name, point.x, point.y - 10, paint);
-
-                    // canvas.drawLine(canvasCenterPointLeft, canvasCenterPointTop, point.x, point.y, paint);
                 }
 
                 canvas.drawBitmap(cursor1lBitmap, canvasCenterPointLeft - cursor1lBitmap.getWidth() / 2, canvasCenterPointTop - cursor1lBitmap.getHeight() / 2, paint);

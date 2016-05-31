@@ -17,7 +17,7 @@ public class GpsDataService extends Service {
     public static final String LOCATION_BROADCAST_EXTRA_LOCATION = "location";
     public static final String LOCATION_BROADCAST_EXTRA_DECLINATION = "declination";
     private static final float GPS_MIN_DISTANCE = 5;
-    private static final long GPS_MIN_TIME = 1000 * 10; //Millisecond
+    private static final long GPS_MIN_TIME = 1000 * 1; //Millisecond
     private static final long BROADCAST_PERIOD = 1; //Second
 
     private boolean inWork = false;
