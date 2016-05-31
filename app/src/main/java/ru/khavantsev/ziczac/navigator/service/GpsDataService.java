@@ -56,7 +56,7 @@ public class GpsDataService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, GPS_MIN_TIME, GPS_MIN_DISTANCE, locationListener);
-        location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        //location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         inWork = true;
         someTask();
         return super.onStartCommand(intent, flags, startId);
