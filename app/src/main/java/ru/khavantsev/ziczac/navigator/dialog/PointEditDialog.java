@@ -1,6 +1,6 @@
 package ru.khavantsev.ziczac.navigator.dialog;
 
-import android.app.DialogFragment;
+import android.support.v4.app.*;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;

@@ -73,7 +73,7 @@ public class PointsActivity extends AppCompatActivity implements PointListener {
 
 
                 pointDialog.setCancelable(false);
-                pointDialog.show(getFragmentManager(), POINT_DIALOG_TAG);
+                pointDialog.show(getSupportFragmentManager(), POINT_DIALOG_TAG);
             }
         });
 
@@ -193,7 +193,7 @@ public class PointsActivity extends AppCompatActivity implements PointListener {
             pointDialog.setArguments(bundle);
 
             pointDialog.setCancelable(false);
-            pointDialog.show(getFragmentManager(), POINT_DIALOG_TAG);
+            pointDialog.show(getSupportFragmentManager(), POINT_DIALOG_TAG);
         }
         return super.onContextItemSelected(item);
     }
