@@ -21,7 +21,6 @@ import java.util.List;
 
 public class MapActivity extends AppCompatActivity {
 
-
     private double scale = 2; // meters per pixel
     private Location location = null;
     private boolean refreshLocation = true;
@@ -33,6 +32,7 @@ public class MapActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         startService(new Intent(this, GpsDataService.class));
+        this.setTitle(R.string.title_activity_map);
         setContentView(new DrawView(this));
 
         br = new BroadcastReceiver() {
@@ -98,11 +98,11 @@ public class MapActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
-            scale++;
+            scale *= 2;
             return true;
         } else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
             if (scale > 1) {
-                scale--;
+                scale /= 2;
             }
             return true;
         }

@@ -5,6 +5,7 @@
     <string name="location_settings">Location settings</string>
     <string name="point_data">Point data</string>
 
+    <string name="title_activity_map">Map</string>
     <string name="title_activity_points">Points</string>
     <string name="title_dialog_point">Point data</string>
     <string name="button_ok">OK</string>
@@ -16,6 +17,7 @@
     <string name="degrees">°</string>
     <string name="delete">Delete</string>
     <string name="edit">Edit</string>
+    <string name="add_point">Add point</string>
 
     <string-array name="calculation_method_entries">
         <item>Lexo</item>

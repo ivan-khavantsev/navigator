@@ -4,10 +4,9 @@ import android.content.*;
 import android.location.Location;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.ContextMenu;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -32,6 +31,9 @@ public class PointsActivity extends AppCompatActivity implements PointListener {
     private static final String ATTRIBUTE_AZIMUTH = "azimuth";
     private static final String ATTRIBUTE_DISTANCE = "distance";
 
+    private static final String LATITUDE = "latitude";
+    private static final String LONGITUDE = "longitude";
+
     private static final String POINT_DIALOG_TAG = "Point";
     private ListView lvPoints;
     private PointsAdapter pointsAdapter;
@@ -50,34 +52,8 @@ public class PointsActivity extends AppCompatActivity implements PointListener {
         sp = PreferenceManager.getDefaultSharedPreferences(this);
 
         setContentView(R.layout.activity_points);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
-
-        FloatingActionButton addPintButton = (FloatingActionButton) findViewById(R.id.add_point);
-        addPintButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                PointEditDialog pointDialog = new PointEditDialog();
-                Bundle bundle = new Bundle();
-                if (lastLocation != null) {
-                    Double lat = new BigDecimal(lastLocation.getLatitude()).setScale(8, BigDecimal.ROUND_HALF_UP).doubleValue();
-                    Double lon = new BigDecimal(lastLocation.getLongitude()).setScale(8, BigDecimal.ROUND_HALF_UP).doubleValue();
-                    bundle.putString("latitude", String.valueOf(lat));
-                    bundle.putString("longitude", String.valueOf(lon));
-                }
-
-                bundle.putString("name", new Date().toString());
-                pointDialog.setArguments(bundle);
-
-
-                pointDialog.setCancelable(false);
-                pointDialog.show(getSupportFragmentManager(), POINT_DIALOG_TAG);
-            }
-        });
-
-        lvPoints = (ListView) findViewById(R.id.lvPoints);
+        lvPoints = findViewById(R.id.lvPoints);
         registerForContextMenu(lvPoints);
 
         br = new BroadcastReceiver() {
@@ -112,6 +88,42 @@ public class PointsActivity extends AppCompatActivity implements PointListener {
         };
         pointService = new PointService();
         loadPoints();
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.points_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.points_menu_add_point:
+                addPointDialog();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
+    private void addPointDialog(){
+        PointEditDialog pointDialog = new PointEditDialog();
+        Bundle bundle = new Bundle();
+        if (lastLocation != null) {
+            Double lat = new BigDecimal(lastLocation.getLatitude()).setScale(8, BigDecimal.ROUND_HALF_UP).doubleValue();
+            Double lon = new BigDecimal(lastLocation.getLongitude()).setScale(8, BigDecimal.ROUND_HALF_UP).doubleValue();
+            bundle.putString(LATITUDE, String.valueOf(lat));
+            bundle.putString(LONGITUDE, String.valueOf(lon));
+        }
+
+        bundle.putString("name", new Date().toString());
+        pointDialog.setArguments(bundle);
+
+
+        pointDialog.setCancelable(false);
+        pointDialog.show(getSupportFragmentManager(), POINT_DIALOG_TAG);
     }
 
     private void loadPoints() {
