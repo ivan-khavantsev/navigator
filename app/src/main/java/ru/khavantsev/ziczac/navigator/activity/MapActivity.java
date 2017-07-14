@@ -98,11 +98,11 @@ public class MapActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
-            scale *= 2;
+            scale *= 1.5;
             return true;
         } else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
             if (scale > 1) {
-                scale /= 2;
+                scale /= 1.5;
             }
             return true;
         }
