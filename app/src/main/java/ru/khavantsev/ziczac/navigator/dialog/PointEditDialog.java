@@ -25,8 +25,8 @@ public class PointEditDialog extends DialogFragment implements OnClickListener {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.dialog_point_add, null);
         getDialog().setTitle(R.string.title_dialog_point);
-        v.findViewById(R.id.btnOk).setOnClickListener(this);
-        v.findViewById(R.id.btnCancel).setOnClickListener(this);
+        v.findViewById(R.id.dialog_point_add_ok).setOnClickListener(this);
+        v.findViewById(R.id.dialog_point_add_cancel).setOnClickListener(this);
 
         etName = (EditText) v.findViewById(R.id.dialog_point_add_name);
         etName.setText(getArguments().getString("name"));
@@ -45,7 +45,7 @@ public class PointEditDialog extends DialogFragment implements OnClickListener {
     }
 
     public void onClick(View v) {
-        if (v.getId() == R.id.btnOk) {
+        if (v.getId() == R.id.dialog_point_add_ok) {
             Point point = new Point();
             point.id = pointId;
             point.name = etName.getText().toString();

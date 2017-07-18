@@ -4,4 +4,8 @@
         android:id="@+id/points_menu_add_point"
         android:title="@string/add_point">
     </item>
+    <item
+        android:id="@+id/points_menu_projection"
+        android:title="@string/projection">
+    </item>
 </menu>

@@ -8,16 +8,25 @@
     <string name="title_activity_map">Map</string>
     <string name="title_activity_points">Points</string>
     <string name="title_dialog_point">Point data</string>
+    <string name="title_dialog_projection">Projection</string>
     <string name="button_ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="dialog_point_add_name_hint">Name</string>
     <string name="dialog_point_add_lat_hint">Latitude</string>
     <string name="dialog_point_add_lon_hint">Longitude</string>
+
+    <string name="dialog_projection_name_hint">Name</string>
+    <string name="dialog_projection_lat_hint">Latitude</string>
+    <string name="dialog_projection_lon_hint">Longitude</string>
+    <string name="dialog_projection_distance_hint">Distance</string>
+    <string name="dialog_projection_angle_hint">Angle(degrees)</string>
+
     <string name="meters">m</string>
     <string name="degrees">°</string>
     <string name="delete">Delete</string>
     <string name="edit">Edit</string>
     <string name="add_point">Add point</string>
+    <string name="projection">Projection</string>
 
     <string-array name="calculation_method_entries">
         <item>Lexo</item>

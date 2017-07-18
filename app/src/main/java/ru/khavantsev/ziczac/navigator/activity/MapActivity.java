@@ -237,8 +237,8 @@ public class MapActivity extends AppCompatActivity {
                 for (Point point : points) {
 
                     LatLon pointLatLon = new LatLon(Double.parseDouble(point.lat), Double.parseDouble(point.lon));
-                    double angle = GeoCalc.rhumbAzimuth(currentPoint, pointLatLon);
-                    double distance = GeoCalc.toRealDistance(GeoCalc.rhumbDistance(currentPoint, pointLatLon));
+                    double angle = GeoCalc.rhumbAzimuthBetween(currentPoint, pointLatLon);
+                    double distance = GeoCalc.toRealDistance(GeoCalc.rhumbDistanceBetween(currentPoint, pointLatLon));
                     float pixelDistance = Math.round(distance / scale);
                     double pointX = canvasCenterPointLeft + pixelDistance * Math.sin(angle);
                     double pointY = canvasCenterPointTop - pixelDistance * Math.cos(angle);

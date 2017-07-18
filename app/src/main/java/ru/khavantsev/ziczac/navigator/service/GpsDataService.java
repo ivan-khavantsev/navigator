@@ -57,6 +57,7 @@ public class GpsDataService extends Service {
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, GPS_MIN_TIME, GPS_MIN_DISTANCE, locationListener);
         //location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        //TODO: Вместо этого, запоминать в настройках последнюю позицию при выходе
         inWork = true;
         someTask();
         return super.onStartCommand(intent, flags, startId);

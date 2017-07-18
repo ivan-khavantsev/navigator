@@ -16,6 +16,7 @@ import ru.khavantsev.ziczac.navigator.adapter.PointsAdapter;
 import ru.khavantsev.ziczac.navigator.db.model.Point;
 import ru.khavantsev.ziczac.navigator.db.service.PointService;
 import ru.khavantsev.ziczac.navigator.dialog.PointEditDialog;
+import ru.khavantsev.ziczac.navigator.dialog.ProjectionDialog;
 import ru.khavantsev.ziczac.navigator.geo.GeoCalc;
 import ru.khavantsev.ziczac.navigator.geo.LatLon;
 import ru.khavantsev.ziczac.navigator.service.GpsDataService;
@@ -35,6 +36,7 @@ public class PointsActivity extends AppCompatActivity implements PointListener {
     private static final String LONGITUDE = "longitude";
 
     private static final String POINT_DIALOG_TAG = "Point";
+    private static final String PROJECTION_DIALOG_TAG = "Projection";
     private ListView lvPoints;
     private PointsAdapter pointsAdapter;
     private PointService pointService;
@@ -71,10 +73,10 @@ public class PointsActivity extends AppCompatActivity implements PointListener {
                             pointLatLon.longitude = Double.parseDouble((String) pointItem.get(PointService.ATTRIBUTE_NAME_LON));
 
                             float usesDeclination = (usingDeclination) ? lastDeclination : 0; // If settings set use declination else not use
-                            double azimuth = GeoCalc.toRealAzimuth(GeoCalc.rhumbAzimuth(selfLatLon, pointLatLon), usesDeclination);
+                            double azimuth = GeoCalc.toRealAzimuth(GeoCalc.rhumbAzimuthBetween(selfLatLon, pointLatLon), usesDeclination);
                             pointItem.put(ATTRIBUTE_AZIMUTH, Math.round(azimuth));
 
-                            double distance = GeoCalc.toRealDistance(GeoCalc.rhumbDistance(selfLatLon, pointLatLon));
+                            double distance = GeoCalc.toRealDistance(GeoCalc.rhumbDistanceBetween(selfLatLon, pointLatLon));
                             pointItem.put(ATTRIBUTE_AZIMUTH, Math.round(azimuth));
                             pointItem.put(ATTRIBUTE_DISTANCE, Math.round(distance));
                             data.set(i, pointItem);
@@ -103,10 +105,30 @@ public class PointsActivity extends AppCompatActivity implements PointListener {
             case R.id.points_menu_add_point:
                 addPointDialog();
                 break;
+            case R.id.points_menu_projection:
+                projectionDialog();
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
 
+    private void projectionDialog(){
+        ProjectionDialog projectionDialog = new ProjectionDialog();
+        Bundle bundle = new Bundle();
+        if (lastLocation != null) {
+            Double lat = new BigDecimal(lastLocation.getLatitude()).setScale(8, BigDecimal.ROUND_HALF_UP).doubleValue();
+            Double lon = new BigDecimal(lastLocation.getLongitude()).setScale(8, BigDecimal.ROUND_HALF_UP).doubleValue();
+            bundle.putString(LATITUDE, String.valueOf(lat));
+            bundle.putString(LONGITUDE, String.valueOf(lon));
+        }
+
+        bundle.putString("name", new Date().toString());
+        projectionDialog.setArguments(bundle);
+
+
+        projectionDialog.setCancelable(false);
+        projectionDialog.show(getSupportFragmentManager(), PROJECTION_DIALOG_TAG);
+    }
 
     private void addPointDialog(){
         PointEditDialog pointDialog = new PointEditDialog();
