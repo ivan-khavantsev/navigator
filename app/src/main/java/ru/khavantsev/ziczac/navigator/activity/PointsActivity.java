@@ -22,16 +22,22 @@ import ru.khavantsev.ziczac.navigator.geo.LatLon;
 import ru.khavantsev.ziczac.navigator.service.GpsDataService;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class PointsActivity extends AppCompatActivity implements PointListener {
 
     private static final int CM_DELETE_ID = 1;
     private static final int CM_EDIT_ID = 2;
+    private static final int CM_PROJECTION_ID = 3;
 
     private static final String ATTRIBUTE_AZIMUTH = "azimuth";
     private static final String ATTRIBUTE_DISTANCE = "distance";
 
+
+    private static final String NAME_DATE_FORMAT = "yyyy-MM-dd-HH:mm";
+    private static final String POINT_ID = "pointId";
+    private static final String NAME = "name";
     private static final String LATITUDE = "latitude";
     private static final String LONGITUDE = "longitude";
 
@@ -112,7 +118,7 @@ public class PointsActivity extends AppCompatActivity implements PointListener {
         return super.onOptionsItemSelected(item);
     }
 
-    private void projectionDialog(){
+    private void projectionDialog() {
         ProjectionDialog projectionDialog = new ProjectionDialog();
         Bundle bundle = new Bundle();
         if (lastLocation != null) {
@@ -122,7 +128,8 @@ public class PointsActivity extends AppCompatActivity implements PointListener {
             bundle.putString(LONGITUDE, String.valueOf(lon));
         }
 
-        bundle.putString("name", new Date().toString());
+        SimpleDateFormat dateFormat = new SimpleDateFormat(NAME_DATE_FORMAT);
+        bundle.putString(NAME, dateFormat.format(new Date()));
         projectionDialog.setArguments(bundle);
 
 
@@ -130,7 +137,7 @@ public class PointsActivity extends AppCompatActivity implements PointListener {
         projectionDialog.show(getSupportFragmentManager(), PROJECTION_DIALOG_TAG);
     }
 
-    private void addPointDialog(){
+    private void addPointDialog() {
         PointEditDialog pointDialog = new PointEditDialog();
         Bundle bundle = new Bundle();
         if (lastLocation != null) {
@@ -140,7 +147,8 @@ public class PointsActivity extends AppCompatActivity implements PointListener {
             bundle.putString(LONGITUDE, String.valueOf(lon));
         }
 
-        bundle.putString("name", new Date().toString());
+        SimpleDateFormat dateFormat = new SimpleDateFormat(NAME_DATE_FORMAT);
+        bundle.putString(NAME, dateFormat.format(new Date()));
         pointDialog.setArguments(bundle);
 
 
@@ -194,6 +202,7 @@ public class PointsActivity extends AppCompatActivity implements PointListener {
         super.onCreateContextMenu(menu, v, menuInfo);
         menu.add(0, CM_EDIT_ID, 0, R.string.edit);
         menu.add(0, CM_DELETE_ID, 0, R.string.delete);
+        menu.add(0, CM_PROJECTION_ID, 0, R.string.projection);
     }
 
     @Override
@@ -220,15 +229,36 @@ public class PointsActivity extends AppCompatActivity implements PointListener {
             long pointId = (Long) pointData.get(PointService.ATTRIBUTE_NAME_ID);
             Point point = pointService.getPoint(pointId);
 
-            bundle.putLong("pointId", point.id);
-            bundle.putString("latitude", point.lat);
-            bundle.putString("longitude", point.lon);
-            bundle.putString("name", point.name);
+            bundle.putLong(POINT_ID, point.id);
+            bundle.putString(LATITUDE, point.lat);
+            bundle.putString(LONGITUDE, point.lon);
+            bundle.putString(NAME, point.name);
             pointDialog.setArguments(bundle);
 
             pointDialog.setCancelable(false);
             pointDialog.show(getSupportFragmentManager(), POINT_DIALOG_TAG);
+
+        } else if (item.getItemId() == CM_PROJECTION_ID) {
+
+            AdapterView.AdapterContextMenuInfo acmi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+            Map<String, Object> pointData = data.get(acmi.position);
+
+            long pointId = (Long) pointData.get(PointService.ATTRIBUTE_NAME_ID);
+            Point point = pointService.getPoint(pointId);
+
+            ProjectionDialog projectionDialog = new ProjectionDialog();
+            Bundle bundle = new Bundle();
+            bundle.putString(LATITUDE, point.lat);
+            bundle.putString(LONGITUDE, point.lon);
+
+
+            bundle.putString(NAME, point.name + "-proj");
+            projectionDialog.setArguments(bundle);
+
+            projectionDialog.setCancelable(false);
+            projectionDialog.show(getSupportFragmentManager(), PROJECTION_DIALOG_TAG);
         }
+
         return super.onContextItemSelected(item);
     }
 
