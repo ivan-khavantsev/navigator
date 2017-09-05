@@ -40,6 +40,7 @@ public class PointsActivity extends AppCompatActivity implements PointListener {
     private static final String NAME = "name";
     private static final String LATITUDE = "latitude";
     private static final String LONGITUDE = "longitude";
+    private static final String DECLINATION = "declination";
 
     private static final String POINT_DIALOG_TAG = "Point";
     private static final String PROJECTION_DIALOG_TAG = "Projection";
@@ -83,7 +84,6 @@ public class PointsActivity extends AppCompatActivity implements PointListener {
                             pointItem.put(ATTRIBUTE_AZIMUTH, Math.round(azimuth));
 
                             double distance = GeoCalc.toRealDistance(GeoCalc.rhumbDistanceBetween(selfLatLon, pointLatLon));
-                            pointItem.put(ATTRIBUTE_AZIMUTH, Math.round(azimuth));
                             pointItem.put(ATTRIBUTE_DISTANCE, Math.round(distance));
                             data.set(i, pointItem);
                         } catch (NumberFormatException e) {
@@ -130,8 +130,10 @@ public class PointsActivity extends AppCompatActivity implements PointListener {
 
         SimpleDateFormat dateFormat = new SimpleDateFormat(NAME_DATE_FORMAT);
         bundle.putString(NAME, dateFormat.format(new Date()));
-        projectionDialog.setArguments(bundle);
 
+        bundle.putFloat(DECLINATION, lastDeclination);
+
+        projectionDialog.setArguments(bundle);
 
         projectionDialog.setCancelable(false);
         projectionDialog.show(getSupportFragmentManager(), PROJECTION_DIALOG_TAG);
@@ -250,7 +252,7 @@ public class PointsActivity extends AppCompatActivity implements PointListener {
             Bundle bundle = new Bundle();
             bundle.putString(LATITUDE, point.lat);
             bundle.putString(LONGITUDE, point.lon);
-
+            bundle.putFloat(DECLINATION, lastDeclination);
 
             bundle.putString(NAME, point.name + "-proj");
             projectionDialog.setArguments(bundle);
@@ -290,6 +292,8 @@ public class PointsActivity extends AppCompatActivity implements PointListener {
             data.set(index, pointData);
         } else {
             data.add(pointData);
+            int index = data.indexOf(pointData);
+            pointIdListIndexMap.put(point.id, index);
         }
         pointsAdapter.notifyDataSetChanged();
     }

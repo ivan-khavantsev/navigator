@@ -19,7 +19,8 @@
     <string name="dialog_projection_lat_hint">Latitude</string>
     <string name="dialog_projection_lon_hint">Longitude</string>
     <string name="dialog_projection_distance_hint">Distance</string>
-    <string name="dialog_projection_angle_hint">Angle(degrees)</string>
+    <string name="dialog_projection_angle_hint">Angle(degrees 123.45)</string>
+    <string name="dialog_projection_use_declination_hint">Correct declination</string>
 
     <string name="meters">m</string>
     <string name="degrees">°</string>

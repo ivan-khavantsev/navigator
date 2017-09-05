@@ -68,6 +68,11 @@ public class GeoCalc {
         return ((Math.toDegrees(radians) - declination + 360.0) % 360.0);
     }
 
+
+    public static double correctDeclination(double angleDegrees, float declination) {
+        return ((angleDegrees + declination + 360.0) % 360.0);
+    }
+
     /**
      * @param point    LatLon
      * @param distance double radians
@@ -83,13 +88,13 @@ public class GeoCalc {
 
         double dPhi = Math.log(Math.tan(lat2 / 2.0 + Math.PI / 4.0) / Math.tan(lat1 / 2.0 + Math.PI / 4.0));
         double q = dLat / dPhi;
-        if (Double.isNaN(dPhi) || Double.isNaN(q)) {
+        if (dPhi == 0 || Double.isNaN(dPhi) || q == 0 || Double.isNaN(q)) {
             q = Math.cos(lat1);
         }
 
-        double dLon = distance * sin(angle)/q;
+        double dLon = distance * sin(angle) / q;
 
-        if (Math.abs(lat2) > Math.PI/2) lat2 = lat2>0 ? Math.PI-lat2 : -Math.PI-lat2;
+        if (Math.abs(lat2) > Math.PI / 2) lat2 = lat2 > 0 ? Math.PI - lat2 : -Math.PI - lat2;
 
         if (Math.abs(dLon) > Math.PI) {
             dLon = dLon > 0 ? -(2 * Math.PI - dLon) : (2 * Math.PI + dLon);

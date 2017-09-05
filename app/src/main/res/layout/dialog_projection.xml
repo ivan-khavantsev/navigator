@@ -52,8 +52,17 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:inputType="number|numberDecimal"
-        android:digits="0123456789"
+        android:digits="0123456789."
         android:hint="@string/dialog_projection_angle_hint"
+        />
+    <CheckBox
+        android:id="@+id/dialog_projection_use_declination"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:hint="@string/dialog_projection_use_declination_hint"
+
         />
     <LinearLayout
             android:layout_width="wrap_content"

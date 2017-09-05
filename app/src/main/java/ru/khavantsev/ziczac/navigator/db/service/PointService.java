@@ -60,13 +60,11 @@ public class PointService extends Service {
 
         long pointId;
         if (point.id == 0) {
-            pointId = db.insertWithOnConflict(POINTS_TABLE_NAME, null, cv, CONFLICT_REPLACE);
+            point.id = db.insertWithOnConflict(POINTS_TABLE_NAME, null, cv, CONFLICT_REPLACE);
         } else {
             db.update(POINTS_TABLE_NAME, cv, "id = ?", new String[]{String.valueOf(point.id)});
-            pointId = point.id;
         }
-
-        return pointId;
+        return point.id;
     }
 
     public void deletePoint(long id) {
