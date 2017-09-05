@@ -81,7 +81,11 @@ public class PointsActivity extends AppCompatActivity implements PointListener {
 
                             float usesDeclination = (usingDeclination) ? lastDeclination : 0; // If settings set use declination else not use
                             double azimuth = GeoCalc.toRealAzimuth(GeoCalc.rhumbAzimuthBetween(selfLatLon, pointLatLon), usesDeclination);
-                            pointItem.put(ATTRIBUTE_AZIMUTH, Math.round(azimuth));
+                            azimuth = new BigDecimal(azimuth).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+                            if (azimuth == 360.0) {
+                                azimuth = 0.0;
+                            }
+                            pointItem.put(ATTRIBUTE_AZIMUTH, azimuth);
 
                             double distance = GeoCalc.toRealDistance(GeoCalc.rhumbDistanceBetween(selfLatLon, pointLatLon));
                             pointItem.put(ATTRIBUTE_DISTANCE, Math.round(distance));
