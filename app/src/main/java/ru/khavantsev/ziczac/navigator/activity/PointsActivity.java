@@ -35,7 +35,7 @@ public class PointsActivity extends AppCompatActivity implements PointListener {
     private static final String ATTRIBUTE_DISTANCE = "distance";
 
 
-    private static final String NAME_DATE_FORMAT = "yyyy-MM-dd-HH:mm";
+    private static final String NAME_DATE_FORMAT = "yyyy-MM-dd-E-HH:mm";
     private static final String POINT_ID = "pointId";
     private static final String NAME = "name";
     private static final String LATITUDE = "latitude";
