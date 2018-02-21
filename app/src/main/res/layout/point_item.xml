@@ -93,9 +93,10 @@
                 android:textSize="16sp">
         </TextView>
         <TextView
-                android:id="@+id/tvPointMeters"
+                android:id="@+id/tvPointCounter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
                 android:layout_gravity="center_vertical"
                 android:text="@string/meters"
                 android:textSize="16sp">

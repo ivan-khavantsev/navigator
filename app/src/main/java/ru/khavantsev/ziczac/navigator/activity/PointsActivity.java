@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+
 import ru.khavantsev.ziczac.navigator.R;
 import ru.khavantsev.ziczac.navigator.adapter.PointsAdapter;
 import ru.khavantsev.ziczac.navigator.db.model.Point;
@@ -20,6 +21,7 @@ import ru.khavantsev.ziczac.navigator.dialog.ProjectionDialog;
 import ru.khavantsev.ziczac.navigator.geo.GeoCalc;
 import ru.khavantsev.ziczac.navigator.geo.LatLon;
 import ru.khavantsev.ziczac.navigator.service.GpsDataService;
+import ru.khavantsev.ziczac.navigator.util.ZzMath;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -33,6 +35,7 @@ public class PointsActivity extends AppCompatActivity implements PointListener {
 
     private static final String ATTRIBUTE_AZIMUTH = "azimuth";
     private static final String ATTRIBUTE_DISTANCE = "distance";
+    private static final String ATTRIBUTE_COUNTER = "counter";
 
 
     private static final String NAME_DATE_FORMAT = "yyyy-MM-dd-E-HH:mm";
@@ -44,6 +47,10 @@ public class PointsActivity extends AppCompatActivity implements PointListener {
 
     private static final String POINT_DIALOG_TAG = "Point";
     private static final String PROJECTION_DIALOG_TAG = "Projection";
+
+    private static final String COUNTER_KM = "km";
+    private static final String COUNTER_M = "m";
+
     private ListView lvPoints;
     private PointsAdapter pointsAdapter;
     private PointService pointService;
@@ -87,8 +94,20 @@ public class PointsActivity extends AppCompatActivity implements PointListener {
                             }
                             pointItem.put(ATTRIBUTE_AZIMUTH, azimuth);
 
-                            double distance = GeoCalc.toRealDistance(GeoCalc.rhumbDistanceBetween(selfLatLon, pointLatLon));
-                            pointItem.put(ATTRIBUTE_DISTANCE, Math.round(distance));
+                            double distance = (GeoCalc.toRealDistance(GeoCalc.rhumbDistanceBetween(selfLatLon, pointLatLon)));
+                            String distanceFormatted;
+                            if (distance >= 1000) { // Один километр
+                                distance /= 1000;
+                                distanceFormatted = String.valueOf(ZzMath.round(distance, 1));
+                                pointItem.put(ATTRIBUTE_COUNTER, COUNTER_KM);
+
+                            } else {
+                                distanceFormatted = String.valueOf(Math.round(distance));
+                                pointItem.put(ATTRIBUTE_COUNTER, COUNTER_M);
+                            }
+
+                            pointItem.put(ATTRIBUTE_DISTANCE, distanceFormatted);
+
                             data.set(i, pointItem);
                         } catch (NumberFormatException e) {
                             //
@@ -186,7 +205,8 @@ public class PointsActivity extends AppCompatActivity implements PointListener {
                 PointService.ATTRIBUTE_NAME_LAT,
                 PointService.ATTRIBUTE_NAME_LON,
                 ATTRIBUTE_AZIMUTH,
-                ATTRIBUTE_DISTANCE
+                ATTRIBUTE_DISTANCE,
+                ATTRIBUTE_COUNTER
         };
 
         int[] to = {
@@ -194,7 +214,8 @@ public class PointsActivity extends AppCompatActivity implements PointListener {
                 R.id.tvPointLat,
                 R.id.tvPointLon,
                 R.id.tvPointAzimuth,
-                R.id.tvPointDistance
+                R.id.tvPointDistance,
+                R.id.tvPointCounter
         };
         pointsAdapter = new PointsAdapter(this, data, R.layout.point_item, from, to);
 
