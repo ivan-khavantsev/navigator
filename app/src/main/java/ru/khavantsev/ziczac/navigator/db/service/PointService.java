@@ -17,6 +17,7 @@ public class PointService extends Service {
     public static final String ATTRIBUTE_NAME_NAME = "name";
     public static final String ATTRIBUTE_NAME_LAT = "lat";
     public static final String ATTRIBUTE_NAME_LON = "lon";
+    public static final String ATTRIBUTE_NAME_DRAW_LINE = "drawLine";
     private static final String POINTS_TABLE_NAME = "points";
 
     public List<Point> getPoints() {
@@ -31,6 +32,7 @@ public class PointService extends Service {
             int nameColIndex = c.getColumnIndex(ATTRIBUTE_NAME_NAME);
             int latColIndex = c.getColumnIndex(ATTRIBUTE_NAME_LAT);
             int lonColIndex = c.getColumnIndex(ATTRIBUTE_NAME_LON);
+            int drawLineColIndex = c.getColumnIndex(ATTRIBUTE_NAME_DRAW_LINE);
 
             do {
                 Point point = new Point();
@@ -38,6 +40,7 @@ public class PointService extends Service {
                 point.name = c.getString(nameColIndex);
                 point.lat = c.getString(latColIndex);
                 point.lon = c.getString(lonColIndex);
+                point.drawLine = c.getInt(drawLineColIndex);
 
                 points.add(point);
             } while (c.moveToNext());
@@ -55,6 +58,7 @@ public class PointService extends Service {
         cv.put(ATTRIBUTE_NAME_NAME, point.name);
         cv.put(ATTRIBUTE_NAME_LAT, point.lat);
         cv.put(ATTRIBUTE_NAME_LON, point.lon);
+        cv.put(ATTRIBUTE_NAME_DRAW_LINE, point.drawLine);
 
         SQLiteDatabase db = getDBHelper().getWritableDatabase();
 
@@ -82,12 +86,14 @@ public class PointService extends Service {
             int nameColIndex = c.getColumnIndex(ATTRIBUTE_NAME_NAME);
             int latColIndex = c.getColumnIndex(ATTRIBUTE_NAME_LAT);
             int lonColIndex = c.getColumnIndex(ATTRIBUTE_NAME_LON);
+            int drawLineColIndex = c.getColumnIndex(ATTRIBUTE_NAME_DRAW_LINE);
 
             point = new Point();
             point.id = c.getInt(idColIndex);
             point.name = c.getString(nameColIndex);
             point.lat = c.getString(latColIndex);
             point.lon = c.getString(lonColIndex);
+            point.drawLine = c.getInt(drawLineColIndex);
         }
         c.close();
         db.close();

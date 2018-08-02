@@ -208,9 +208,11 @@ public class MapActivity extends AppCompatActivity {
                 }
 
                 for (CanvasPoint point : canvasPoints) {
-//                    paint.setStrokeWidth(2);
-//                    paint.setColor(getResources().getColor(R.color.colorBlue));
-//                    canvas.drawLine(canvasCenterPointLeft, canvasCenterPointTop, point.x, point.y, paint);
+                    if(point.drawLine){
+                        paint.setStrokeWidth(2);
+                        paint.setColor(getResources().getColor(R.color.colorGray));
+                        canvas.drawLine(canvasCenterPointLeft, canvasCenterPointTop, point.x, point.y, paint);
+                    }
 
                     paint.setColor(getResources().getColor(R.color.colorPrimaryDark));
                     canvas.drawCircle(point.x, point.y, 7, paint);
@@ -243,7 +245,7 @@ public class MapActivity extends AppCompatActivity {
                     double pointX = canvasCenterPointLeft + pixelDistance * Math.sin(angle);
                     double pointY = canvasCenterPointTop - pixelDistance * Math.cos(angle);
 
-                    canvasPoints.add(new CanvasPoint((float) pointX, (float) pointY, point.name));
+                    canvasPoints.add(new CanvasPoint((float) pointX, (float) pointY, point.name, point.drawLine == 1));
                 }
                 refreshLocation = false;
             }
@@ -258,11 +260,13 @@ public class MapActivity extends AppCompatActivity {
                 float x;
                 float y;
                 String name;
+                Boolean drawLine;
 
-                CanvasPoint(float x, float y, String name) {
+                CanvasPoint(float x, float y, String name, Boolean drawLine) {
                     this.x = x;
                     this.y = y;
                     this.name = name;
+                    this.drawLine = drawLine;
                 }
             }
 

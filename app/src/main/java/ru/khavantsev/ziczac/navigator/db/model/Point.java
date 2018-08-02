@@ -6,4 +6,5 @@ public class Point {
     public String name;
     public String lat;
     public String lon;
+    public int drawLine = 0;
 }

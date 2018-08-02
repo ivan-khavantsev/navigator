@@ -193,6 +193,7 @@ public class PointsActivity extends AppCompatActivity implements PointListener {
             m.put(PointService.ATTRIBUTE_NAME_NAME, p.name);
             m.put(PointService.ATTRIBUTE_NAME_LAT, p.lat);
             m.put(PointService.ATTRIBUTE_NAME_LON, p.lon);
+            m.put(PointService.ATTRIBUTE_NAME_DRAW_LINE, p.drawLine==1);
             m.put(ATTRIBUTE_AZIMUTH, "N/A");
             m.put(ATTRIBUTE_DISTANCE, "N/A");
             data.add(m);
@@ -201,18 +202,22 @@ public class PointsActivity extends AppCompatActivity implements PointListener {
         }
 
         String[] from = {
+                PointService.ATTRIBUTE_NAME_ID,
                 PointService.ATTRIBUTE_NAME_NAME,
                 PointService.ATTRIBUTE_NAME_LAT,
                 PointService.ATTRIBUTE_NAME_LON,
+                PointService.ATTRIBUTE_NAME_DRAW_LINE,
                 ATTRIBUTE_AZIMUTH,
                 ATTRIBUTE_DISTANCE,
                 ATTRIBUTE_COUNTER
         };
 
         int[] to = {
+                R.id.tvPointId,
                 R.id.tvPointName,
                 R.id.tvPointLat,
                 R.id.tvPointLon,
+                R.id.tvPointCheckboxLine,
                 R.id.tvPointAzimuth,
                 R.id.tvPointDistance,
                 R.id.tvPointCounter
@@ -310,6 +315,7 @@ public class PointsActivity extends AppCompatActivity implements PointListener {
         pointData.put(PointService.ATTRIBUTE_NAME_NAME, point.name);
         pointData.put(PointService.ATTRIBUTE_NAME_LAT, point.lat);
         pointData.put(PointService.ATTRIBUTE_NAME_LON, point.lon);
+        pointData.put(PointService.ATTRIBUTE_NAME_DRAW_LINE, point.drawLine==1);
         pointData.put(ATTRIBUTE_AZIMUTH, "N/A");
         pointData.put(ATTRIBUTE_DISTANCE, "N/A");
         if (pointIdListIndexMap.containsKey(point.id)) {

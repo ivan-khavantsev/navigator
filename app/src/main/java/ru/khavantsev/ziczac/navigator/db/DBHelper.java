@@ -15,6 +15,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("create table points ("
                 + "id integer primary key autoincrement,"
                 + "name text,"
+                + "drawLine integer,"
                 + "lat text,"
                 + "lon text" + ");");
     }
