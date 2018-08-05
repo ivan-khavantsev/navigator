@@ -7,4 +7,5 @@ public class Point {
     public String lat;
     public String lon;
     public int drawLine = 0;
+    public int enable = 1;
 }

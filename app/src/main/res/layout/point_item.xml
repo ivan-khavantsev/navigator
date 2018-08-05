@@ -15,14 +15,28 @@
         android:visibility="gone"
         android:textSize="18sp">
     </TextView>
-    <TextView
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/parentView"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical">
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvPointCheckboxEnable"
+            android:layout_alignBottom="@+id/tvPointName"
+            android:focusable="false"
+            />
+        <TextView
             android:id="@+id/tvPointName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:textStyle="bold"
-            android:textSize="18sp">
-    </TextView>
+            android:layout_toRightOf="@+id/tvPointCheckboxEnable"
+            android:textSize="18sp"
+            android:textStyle="bold">
+        </TextView>
+    </RelativeLayout>
     <LinearLayout
             xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
@@ -42,7 +56,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginEnd="10dp"
-                android:textStyle="italic"
+                android:layout_marginStart="2dp"
                 android:text="@string/degrees"
                 android:textSize="16sp">
         </TextView>
@@ -59,7 +73,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:textStyle="italic"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="2dp"
                 android:text="@string/degrees"
                 android:textSize="16sp">
         </TextView>

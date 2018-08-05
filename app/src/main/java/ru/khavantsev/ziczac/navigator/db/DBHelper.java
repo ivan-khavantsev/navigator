@@ -16,6 +16,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 + "id integer primary key autoincrement,"
                 + "name text,"
                 + "drawLine integer,"
+                + "enable integer,"
                 + "lat text,"
                 + "lon text" + ");");
     }

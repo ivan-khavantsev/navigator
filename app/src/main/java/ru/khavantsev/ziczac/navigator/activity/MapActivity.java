@@ -208,9 +208,10 @@ public class MapActivity extends AppCompatActivity {
                 }
 
                 for (CanvasPoint point : canvasPoints) {
+                    paint.setAntiAlias(true);
                     if(point.drawLine){
                         paint.setStrokeWidth(2);
-                        paint.setColor(getResources().getColor(R.color.colorGray));
+                        paint.setColor(getResources().getColor(R.color.colorBlue));
                         canvas.drawLine(canvasCenterPointLeft, canvasCenterPointTop, point.x, point.y, paint);
                     }
 
@@ -237,15 +238,16 @@ public class MapActivity extends AppCompatActivity {
 
                 canvasPoints.clear();
                 for (Point point : points) {
+                    if (point.enable == 1) {
+                        LatLon pointLatLon = new LatLon(Double.parseDouble(point.lat), Double.parseDouble(point.lon));
+                        double angle = GeoCalc.rhumbAzimuthBetween(currentPoint, pointLatLon);
+                        double distance = GeoCalc.toRealDistance(GeoCalc.rhumbDistanceBetween(currentPoint, pointLatLon));
+                        float pixelDistance = Math.round(distance / scale);
+                        double pointX = canvasCenterPointLeft + pixelDistance * Math.sin(angle);
+                        double pointY = canvasCenterPointTop - pixelDistance * Math.cos(angle);
 
-                    LatLon pointLatLon = new LatLon(Double.parseDouble(point.lat), Double.parseDouble(point.lon));
-                    double angle = GeoCalc.rhumbAzimuthBetween(currentPoint, pointLatLon);
-                    double distance = GeoCalc.toRealDistance(GeoCalc.rhumbDistanceBetween(currentPoint, pointLatLon));
-                    float pixelDistance = Math.round(distance / scale);
-                    double pointX = canvasCenterPointLeft + pixelDistance * Math.sin(angle);
-                    double pointY = canvasCenterPointTop - pixelDistance * Math.cos(angle);
-
-                    canvasPoints.add(new CanvasPoint((float) pointX, (float) pointY, point.name, point.drawLine == 1));
+                        canvasPoints.add(new CanvasPoint((float) pointX, (float) pointY, point.name, point.drawLine == 1));
+                    }
                 }
                 refreshLocation = false;
             }

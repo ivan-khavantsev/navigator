@@ -18,6 +18,7 @@ public class PointService extends Service {
     public static final String ATTRIBUTE_NAME_LAT = "lat";
     public static final String ATTRIBUTE_NAME_LON = "lon";
     public static final String ATTRIBUTE_NAME_DRAW_LINE = "drawLine";
+    public static final String ATTRIBUTE_NAME_ENABLE = "enable";
     private static final String POINTS_TABLE_NAME = "points";
 
     public List<Point> getPoints() {
@@ -25,28 +26,15 @@ public class PointService extends Service {
 
         SQLiteDatabase db = getDBHelper().getWritableDatabase();
 
-        Cursor c = db.query("points", null, null, null, null, null, null);
-        if (c.moveToFirst()) {
-
-            int idColIndex = c.getColumnIndex(ATTRIBUTE_NAME_ID);
-            int nameColIndex = c.getColumnIndex(ATTRIBUTE_NAME_NAME);
-            int latColIndex = c.getColumnIndex(ATTRIBUTE_NAME_LAT);
-            int lonColIndex = c.getColumnIndex(ATTRIBUTE_NAME_LON);
-            int drawLineColIndex = c.getColumnIndex(ATTRIBUTE_NAME_DRAW_LINE);
-
+        Cursor cursor = db.query(POINTS_TABLE_NAME, null, null, null, null, null, null);
+        if (cursor.moveToFirst()) {
             do {
-                Point point = new Point();
-                point.id = c.getInt(idColIndex);
-                point.name = c.getString(nameColIndex);
-                point.lat = c.getString(latColIndex);
-                point.lon = c.getString(lonColIndex);
-                point.drawLine = c.getInt(drawLineColIndex);
-
+                Point point = buildPoint(cursor);
                 points.add(point);
-            } while (c.moveToNext());
+            } while (cursor.moveToNext());
 
         }
-        c.close();
+        cursor.close();
         db.close();
 
         return points;
@@ -59,10 +47,10 @@ public class PointService extends Service {
         cv.put(ATTRIBUTE_NAME_LAT, point.lat);
         cv.put(ATTRIBUTE_NAME_LON, point.lon);
         cv.put(ATTRIBUTE_NAME_DRAW_LINE, point.drawLine);
+        cv.put(ATTRIBUTE_NAME_ENABLE, point.enable);
 
         SQLiteDatabase db = getDBHelper().getWritableDatabase();
 
-        long pointId;
         if (point.id == 0) {
             point.id = db.insertWithOnConflict(POINTS_TABLE_NAME, null, cv, CONFLICT_REPLACE);
         } else {
@@ -79,25 +67,32 @@ public class PointService extends Service {
     public Point getPoint(long pointId) {
         Point point = null;
         SQLiteDatabase db = getDBHelper().getWritableDatabase();
-        Cursor c = db.query("points", null, "id = ?", new String[]{String.valueOf(pointId)}, null, null, null);
-        if (c.moveToFirst()) {
-
-            int idColIndex = c.getColumnIndex(ATTRIBUTE_NAME_ID);
-            int nameColIndex = c.getColumnIndex(ATTRIBUTE_NAME_NAME);
-            int latColIndex = c.getColumnIndex(ATTRIBUTE_NAME_LAT);
-            int lonColIndex = c.getColumnIndex(ATTRIBUTE_NAME_LON);
-            int drawLineColIndex = c.getColumnIndex(ATTRIBUTE_NAME_DRAW_LINE);
-
-            point = new Point();
-            point.id = c.getInt(idColIndex);
-            point.name = c.getString(nameColIndex);
-            point.lat = c.getString(latColIndex);
-            point.lon = c.getString(lonColIndex);
-            point.drawLine = c.getInt(drawLineColIndex);
+        Cursor cursor = db.query(POINTS_TABLE_NAME, null, "id = ?", new String[]{String.valueOf(pointId)}, null, null, null);
+        if (cursor.moveToFirst()) {
+            point = buildPoint(cursor);
         }
-        c.close();
+        cursor.close();
         db.close();
 
         return point;
     }
+
+    private Point buildPoint(Cursor cursor) {
+        int idColIndex = cursor.getColumnIndex(ATTRIBUTE_NAME_ID);
+        int nameColIndex = cursor.getColumnIndex(ATTRIBUTE_NAME_NAME);
+        int latColIndex = cursor.getColumnIndex(ATTRIBUTE_NAME_LAT);
+        int lonColIndex = cursor.getColumnIndex(ATTRIBUTE_NAME_LON);
+        int drawLineColIndex = cursor.getColumnIndex(ATTRIBUTE_NAME_DRAW_LINE);
+        int enableColIndex = cursor.getColumnIndex(ATTRIBUTE_NAME_ENABLE);
+
+        Point point = new Point();
+        point.id = cursor.getInt(idColIndex);
+        point.name = cursor.getString(nameColIndex);
+        point.lat = cursor.getString(latColIndex);
+        point.lon = cursor.getString(lonColIndex);
+        point.drawLine = cursor.getInt(drawLineColIndex);
+        point.enable = cursor.getInt(enableColIndex);
+        return point;
+    }
+
 }

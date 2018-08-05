@@ -18,7 +18,6 @@ import ru.khavantsev.ziczac.navigator.db.service.PointService;
 
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 public class PointsAdapter extends SimpleAdapter implements CompoundButton.OnCheckedChangeListener {
 
@@ -48,35 +47,52 @@ public class PointsAdapter extends SimpleAdapter implements CompoundButton.OnChe
 
         if (iConvertView == null) {
             iConvertView = mInflater.inflate(R.layout.point_item, null);
-            holder.mImageView = (ImageView) iConvertView.findViewById(R.id.icPointMagnet);
-            holder.mCheckBox = (CheckBox) iConvertView.findViewById(R.id.tvPointCheckboxLine);
+            holder.magnetImageView = (ImageView) iConvertView.findViewById(R.id.icPointMagnet);
+            holder.drawLineCheckBox = (CheckBox) iConvertView.findViewById(R.id.tvPointCheckboxLine);
+            holder.drawLineCheckBox = (CheckBox) iConvertView.findViewById(R.id.tvPointCheckboxLine);
+            holder.enableCheckBox = (CheckBox) iConvertView.findViewById(R.id.tvPointCheckboxEnable);
             iConvertView.setTag(holder);
 
         } else {
             holder = (Holder) iConvertView.getTag();
         }
 
-        holder.mImageView.setVisibility(magnetVisibility);
-        holder.mCheckBox.setOnCheckedChangeListener(this);
+        holder.magnetImageView.setVisibility(magnetVisibility);
+        holder.drawLineCheckBox.setOnCheckedChangeListener(this);
+        holder.enableCheckBox.setOnCheckedChangeListener(this);
 
         return super.getView(iPosition, iConvertView, iViewGroup);
     }
 
     private class Holder {
-        ImageView mImageView = null;
-        CheckBox mCheckBox = null;
+        ImageView magnetImageView = null;
+        CheckBox drawLineCheckBox = null;
+        CheckBox enableCheckBox = null;
     }
 
     @Override
     public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-        Integer id = Integer.parseInt(((TextView)((LinearLayout) compoundButton.getParent().getParent()).findViewById(R.id.tvPointId)).getText().toString());
-        Point point = pointService.getPoint(id);
-        int drawLine = compoundButton.isChecked()?1:0;
-        if(point.drawLine != drawLine){
-            point.drawLine = drawLine;
-            pointService.savePoint(point);
-            pointsActivity.pointResult(point);
+        if (compoundButton.getId() == R.id.tvPointCheckboxLine) {
+            Integer id = Integer.parseInt(((TextView) ((LinearLayout) compoundButton.getParent().getParent()).findViewById(R.id.tvPointId)).getText().toString());
+            Point point = pointService.getPoint(id);
+            int drawLine = compoundButton.isChecked() ? 1 : 0;
+            if (point.drawLine != drawLine) {
+                point.drawLine = drawLine;
+                pointService.savePoint(point);
+                pointsActivity.pointResult(point);
+            }
+        }else if(compoundButton.getId() == R.id.tvPointCheckboxEnable){
+            Integer id = Integer.parseInt(((TextView) ((LinearLayout) compoundButton.getParent().getParent()).findViewById(R.id.tvPointId)).getText().toString());
+            Point point = pointService.getPoint(id);
+            int enable = compoundButton.isChecked() ? 1 : 0;
+            if (point.enable != enable) {
+                point.enable = enable;
+                pointService.savePoint(point);
+                pointsActivity.pointResult(point);
+            }
         }
+
+
     }
 
 }
