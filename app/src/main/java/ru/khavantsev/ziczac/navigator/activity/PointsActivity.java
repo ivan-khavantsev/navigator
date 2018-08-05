@@ -265,9 +265,6 @@ public class PointsActivity extends AppCompatActivity implements PointListener {
             Point point = pointService.getPoint(pointId);
 
             bundle.putLong(POINT_ID, point.id);
-            bundle.putString(LATITUDE, point.lat);
-            bundle.putString(LONGITUDE, point.lon);
-            bundle.putString(NAME, point.name);
             pointDialog.setArguments(bundle);
 
             pointDialog.setCancelable(false);

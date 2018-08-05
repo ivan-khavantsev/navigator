@@ -15,6 +15,7 @@ import ru.khavantsev.ziczac.navigator.db.service.PointService;
 import ru.khavantsev.ziczac.navigator.geo.GeoCalc;
 import ru.khavantsev.ziczac.navigator.geo.LatLon;
 import ru.khavantsev.ziczac.navigator.service.GpsDataService;
+import ru.khavantsev.ziczac.navigator.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -98,7 +99,9 @@ public class MapActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
-            scale *= 1.5;
+            if(scale < 170445){
+                scale *= 1.5;
+            }
             return true;
         } else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
             if (scale > 1) {
@@ -226,6 +229,51 @@ public class MapActivity extends AppCompatActivity {
                 canvas.drawBitmap(cursor1lBitmap, canvasCenterPointLeft - cursor1lBitmap.getWidth() / 2, canvasCenterPointTop - cursor1lBitmap.getHeight() / 2, paint);
                 Bitmap cursor = rotateBitmap(cursorBitmap, bearing);
                 canvas.drawBitmap(cursor, canvasCenterPointLeft - cursor.getWidth() / 2, canvasCenterPointTop - cursor.getHeight() / 2, paint);
+
+                paint.setColor(getResources().getColor(R.color.colorWhite));
+                canvas.drawRect(0, canvasHeight-canvasHeight/30, canvasWidth, canvasHeight, paint);
+                paint.setColor(getResources().getColor(R.color.colorPrimaryDark));
+                canvas.drawRect(0, canvasHeight-canvasHeight/30, canvasCenterPointLeft/2, canvasHeight, paint);
+                canvas.drawRect(canvasCenterPointLeft, canvasHeight-canvasHeight/30, canvasCenterPointLeft+canvasCenterPointLeft/2, canvasHeight, paint);
+                paint.setStrokeWidth(2);
+                canvas.drawLine(0, canvasHeight-canvasHeight/30+1, canvasWidth, canvasHeight-canvasHeight/30+1, paint);
+
+                paint.setTextAlign(Paint.Align.LEFT);
+                paint.setTextSize(12);
+
+                Paint stkPaint = new Paint();
+                stkPaint.setTextAlign(Paint.Align.LEFT);
+                stkPaint.setTextSize(12);
+                stkPaint.setStyle(Paint.Style.STROKE);
+                stkPaint.setStrokeWidth(1);
+                stkPaint.setColor(getResources().getColor(R.color.colorWhite));
+
+                int mettersPerCell = (int)Math.round((scale*canvasWidth)/4);
+
+                canvas.drawText("0", 2, canvasHeight-canvasHeight/30 - 5, stkPaint);
+                canvas.drawText("0", 2, canvasHeight-canvasHeight/30 - 5, paint);
+
+                paint.setTextAlign(Paint.Align.CENTER);
+                stkPaint.setTextAlign(Paint.Align.CENTER);
+
+                String distance = StringUtils.metersForDisplay(mettersPerCell);
+                canvas.drawText(distance, canvasCenterPointLeft/2, canvasHeight-canvasHeight/30 - 5, stkPaint);
+                canvas.drawText(distance, canvasCenterPointLeft/2, canvasHeight-canvasHeight/30 - 5, paint);
+
+                distance = StringUtils.metersForDisplay(mettersPerCell*2);
+                canvas.drawText(distance, canvasCenterPointLeft, canvasHeight-canvasHeight/30 - 5, stkPaint);
+                canvas.drawText(distance, canvasCenterPointLeft, canvasHeight-canvasHeight/30 - 5, paint);
+
+                distance = StringUtils.metersForDisplay(mettersPerCell*3);
+                canvas.drawText(distance, canvasCenterPointLeft+canvasCenterPointLeft/2, canvasHeight-canvasHeight/30 - 5, stkPaint);
+                canvas.drawText(distance, canvasCenterPointLeft+canvasCenterPointLeft/2, canvasHeight-canvasHeight/30 - 5, paint);
+
+                paint.setTextAlign(Paint.Align.RIGHT);
+                stkPaint.setTextAlign(Paint.Align.RIGHT);
+                distance = StringUtils.metersForDisplay(mettersPerCell*4);
+                canvas.drawText(distance, canvasWidth-2, canvasHeight-canvasHeight/30 - 5, stkPaint);
+                canvas.drawText(distance, canvasWidth-2, canvasHeight-canvasHeight/30 - 5, paint);
+
             }
 
             void refreshLocations() {
