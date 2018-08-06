@@ -292,7 +292,7 @@ public class MapActivity extends AppCompatActivity {
                     currentPoint.latitude = location.getLatitude();
                     currentPoint.longitude = location.getLongitude();
                     bearing = location.getBearing();
-                    speed = location.getSpeed();
+                    speed = (int) ((location.getSpeed()*3600)/1000);
                     altitude = location.getAltitude();
                 }
 
