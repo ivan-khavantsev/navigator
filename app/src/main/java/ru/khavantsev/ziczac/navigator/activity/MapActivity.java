@@ -16,6 +16,7 @@ import ru.khavantsev.ziczac.navigator.geo.GeoCalc;
 import ru.khavantsev.ziczac.navigator.geo.LatLon;
 import ru.khavantsev.ziczac.navigator.service.GpsDataService;
 import ru.khavantsev.ziczac.navigator.util.StringUtils;
+import ru.khavantsev.ziczac.navigator.util.ZzMath;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,7 @@ public class MapActivity extends AppCompatActivity {
 
     private double scale = 2; // meters per pixel
     private Location location = null;
+    private float declination = 0;
     private boolean refreshLocation = true;
     private List<Point> points = null;
     private BroadcastReceiver br;
@@ -39,6 +41,7 @@ public class MapActivity extends AppCompatActivity {
         br = new BroadcastReceiver() {
             public void onReceive(Context context, Intent intent) {
                 location = intent.getParcelableExtra(GpsDataService.LOCATION_BROADCAST_EXTRA_LOCATION);
+                declination = intent.getParcelableExtra(GpsDataService.LOCATION_BROADCAST_EXTRA_DECLINATION);
                 refreshLocation = true;
             }
         };
@@ -162,6 +165,8 @@ public class MapActivity extends AppCompatActivity {
             int canvasWidth;
             int canvasHeight;
             float bearing = 0;
+            float speed = 0;
+            double altitude = 0;
             float canvasCenterPointLeft;
             float canvasCenterPointTop;
             List<CanvasPoint> canvasPoints = new ArrayList<>();
@@ -274,6 +279,14 @@ public class MapActivity extends AppCompatActivity {
                 canvas.drawText(distance, canvasWidth-2, canvasHeight-canvasHeight/30 - 5, stkPaint);
                 canvas.drawText(distance, canvasWidth-2, canvasHeight-canvasHeight/30 - 5, paint);
 
+                paint.setTextAlign(Paint.Align.CENTER);
+                paint.setColor(getResources().getColor(R.color.colorWhite));
+                canvas.drawText(String.valueOf(ZzMath.round(bearing, 1)) + "°", canvasCenterPointLeft / 4, canvasHeight - canvasHeight / 60 + 6, paint);
+                canvas.drawText(String.valueOf(Math.round(speed))+" km/h", canvasCenterPointLeft + canvasCenterPointLeft / 4, canvasHeight - canvasHeight / 60 + 6, paint);
+
+                paint.setColor(getResources().getColor(R.color.colorPrimaryDark));
+                canvas.drawText(String.valueOf(ZzMath.round(declination, 1)) + "°", (canvasCenterPointLeft / 4) * 3, canvasHeight - canvasHeight / 60 + 6, paint);
+                canvas.drawText(String.valueOf(Math.round(altitude))+"m", (canvasCenterPointLeft / 4) * 7, canvasHeight - canvasHeight / 60 + 6, paint);
             }
 
             void refreshLocations() {
@@ -282,6 +295,8 @@ public class MapActivity extends AppCompatActivity {
                     currentPoint.latitude = location.getLatitude();
                     currentPoint.longitude = location.getLongitude();
                     bearing = location.getBearing();
+                    speed = location.getSpeed();
+                    altitude = location.getAltitude();
                 }
 
                 canvasPoints.clear();
