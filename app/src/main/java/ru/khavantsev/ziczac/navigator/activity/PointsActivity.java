@@ -95,7 +95,7 @@ public class PointsActivity extends AppCompatActivity implements PointListener {
                             GeodesicData geodesicData = GeoCalc.getInverse(selfLatLon, pointLatLon);
                             double azimuth = GeoCalc.applyDeclination(geodesicData.azi1, usesDeclination) ;
 
-                            azimuth = new BigDecimal(azimuth).setScale(3, BigDecimal.ROUND_HALF_UP).doubleValue();
+                            azimuth = new BigDecimal(azimuth).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
                             if (azimuth == 360.0) {
                                 azimuth = 0.0;
                             }
@@ -104,7 +104,7 @@ public class PointsActivity extends AppCompatActivity implements PointListener {
 
                             pointItem.put(ATTRIBUTE_AZIMUTH, azimuth);
 
-                            DecimalFormat formatter = new DecimalFormat();
+                            DecimalFormat formatter = new DecimalFormat("#,##0.00");
                             DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance();
                             symbols.setGroupingSeparator(' '); //явно задаем символ разделителя тысяч
                             symbols.setDecimalSeparator('.');
