@@ -102,18 +102,15 @@ public class PointsActivity extends AppCompatActivity implements PointListener {
 
                             double distance = geodesicData.s12;
 
-                            pointItem.put(ATTRIBUTE_AZIMUTH, azimuth);
-
                             DecimalFormat formatter = new DecimalFormat("#,##0.00");
                             DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance();
                             symbols.setGroupingSeparator(' '); //явно задаем символ разделителя тысяч
                             symbols.setDecimalSeparator('.');
                             formatter.setDecimalFormatSymbols(symbols);
 
-                            String distanceFormatted = formatter.format(ZzMath.round(distance, 2));
-
+                            pointItem.put(ATTRIBUTE_AZIMUTH, formatter.format(azimuth));
+                            pointItem.put(ATTRIBUTE_DISTANCE, formatter.format(ZzMath.round(distance, 2)));
                             pointItem.put(ATTRIBUTE_COUNTER, COUNTER_M);
-                            pointItem.put(ATTRIBUTE_DISTANCE, distanceFormatted);
 
                             data.set(i, pointItem);
                         } catch (NumberFormatException e) {
