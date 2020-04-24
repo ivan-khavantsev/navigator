@@ -1,5 +1,8 @@
 package ru.khavantsev.ziczac.navigator.geo;
 
+import net.sf.geographiclib.Geodesic;
+import net.sf.geographiclib.GeodesicData;
+
 import static java.lang.Math.*;
 
 public class GeoCalc {
@@ -68,9 +71,17 @@ public class GeoCalc {
         return ((Math.toDegrees(radians) - declination + 360.0) % 360.0);
     }
 
+    public static double applyDeclination(double degrees, float declination){
+        return ((degrees - declination + 360.0) % 360.0);
+    }
 
     public static double correctDeclination(double angleDegrees, float declination) {
         return ((angleDegrees + declination + 360.0) % 360.0);
+    }
+
+
+    public static GeodesicData getInverse(LatLon point1, LatLon point2){
+        return Geodesic.WGS84.Inverse(point1.latitude, point1.longitude, point2.latitude, point2.longitude);
     }
 
     /**
@@ -80,6 +91,17 @@ public class GeoCalc {
      * @return LatLon new point coordinates
      */
     public static LatLon projection(LatLon point, double distance, double angle) {
+        GeodesicData g = Geodesic.WGS84.Direct(point.latitude, point.longitude, angle, distance);
+        return new LatLon(g.lat2, g.lon2);
+    }
+
+    /**
+     * @param point    LatLon
+     * @param distance double radians
+     * @param angle    double radians
+     * @return LatLon new point coordinates
+     */
+    public static LatLon projection2(LatLon point, double distance, double angle) {
         double lat1 = Math.toRadians(point.latitude);
         double lon1 = Math.toRadians(point.longitude);
 

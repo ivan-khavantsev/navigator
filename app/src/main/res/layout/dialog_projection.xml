@@ -35,16 +35,16 @@
             android:digits="0123456789.-"
             android:hint="@string/dialog_projection_lon_hint"
     />
+
     <EditText
         android:id="@+id/dialog_projection_distance"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:inputType="number|numberDecimal"
-        android:digits="0123456789"
+        android:digits="0123456789."
         android:hint="@string/dialog_projection_distance_hint"
-        />
+        android:inputType="number|numberDecimal" />
     <EditText
         android:id="@+id/dialog_projection_angle"
         android:layout_width="match_parent"

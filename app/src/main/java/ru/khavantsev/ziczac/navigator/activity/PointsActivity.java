@@ -12,6 +12,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import net.sf.geographiclib.GeodesicData;
+
 import ru.khavantsev.ziczac.navigator.R;
 import ru.khavantsev.ziczac.navigator.adapter.PointsAdapter;
 import ru.khavantsev.ziczac.navigator.db.model.Point;
@@ -24,6 +26,8 @@ import ru.khavantsev.ziczac.navigator.service.GpsDataService;
 import ru.khavantsev.ziczac.navigator.util.ZzMath;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -87,25 +91,28 @@ public class PointsActivity extends AppCompatActivity implements PointListener {
                             pointLatLon.longitude = Double.parseDouble((String) pointItem.get(PointService.ATTRIBUTE_NAME_LON));
 
                             float usesDeclination = (usingDeclination) ? lastDeclination : 0; // If settings set use declination else not use
-                            double azimuth = GeoCalc.toRealAzimuth(GeoCalc.rhumbAzimuthBetween(selfLatLon, pointLatLon), usesDeclination);
-                            azimuth = new BigDecimal(azimuth).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+
+                            GeodesicData geodesicData = GeoCalc.getInverse(selfLatLon, pointLatLon);
+                            double azimuth = GeoCalc.applyDeclination(geodesicData.azi1, usesDeclination) ;
+
+                            azimuth = new BigDecimal(azimuth).setScale(3, BigDecimal.ROUND_HALF_UP).doubleValue();
                             if (azimuth == 360.0) {
                                 azimuth = 0.0;
                             }
+
+                            double distance = geodesicData.s12;
+
                             pointItem.put(ATTRIBUTE_AZIMUTH, azimuth);
 
-                            double distance = (GeoCalc.toRealDistance(GeoCalc.rhumbDistanceBetween(selfLatLon, pointLatLon)));
-                            String distanceFormatted;
-                            if (distance >= 1000) { // Один километр
-                                distance /= 1000;
-                                distanceFormatted = String.valueOf(ZzMath.round(distance, 1));
-                                pointItem.put(ATTRIBUTE_COUNTER, COUNTER_KM);
+                            DecimalFormat formatter = new DecimalFormat();
+                            DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance();
+                            symbols.setGroupingSeparator(' '); //явно задаем символ разделителя тысяч
+                            symbols.setDecimalSeparator('.');
+                            formatter.setDecimalFormatSymbols(symbols);
 
-                            } else {
-                                distanceFormatted = String.valueOf(Math.round(distance));
-                                pointItem.put(ATTRIBUTE_COUNTER, COUNTER_M);
-                            }
+                            String distanceFormatted = formatter.format(ZzMath.round(distance, 2));
 
+                            pointItem.put(ATTRIBUTE_COUNTER, COUNTER_M);
                             pointItem.put(ATTRIBUTE_DISTANCE, distanceFormatted);
 
                             data.set(i, pointItem);

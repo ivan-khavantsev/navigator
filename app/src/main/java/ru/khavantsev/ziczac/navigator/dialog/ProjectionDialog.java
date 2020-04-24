@@ -53,7 +53,7 @@ public class ProjectionDialog extends DialogFragment implements View.OnClickList
         etLon.setText(getArguments().getString(LONGITUDE));
 
         etDistance = v.findViewById(R.id.dialog_projection_distance);
-        etDistance.addTextChangedListener(new DecimalInputTextWatcher(etDistance, 8, 0));
+        etDistance.addTextChangedListener(new DecimalInputTextWatcher(etDistance, 8, 2));
 
         etAngle = v.findViewById(R.id.dialog_projection_angle);
         etAngle.addTextChangedListener(new DecimalInputTextWatcher(etAngle, 3, 2));
@@ -71,16 +71,16 @@ public class ProjectionDialog extends DialogFragment implements View.OnClickList
 
             double lat = Double.parseDouble(etLat.getText().toString());
             double lon = Double.parseDouble(etLon.getText().toString());
-            double distance = GeoCalc.distanceToRadians(Long.parseLong(etDistance.getText().toString()));
+
+            double distance = Double.parseDouble(etDistance.getText().toString());
             boolean useDeclination = cbUseDeclination.isChecked();
 
             double angleDegrees = Double.parseDouble(etAngle.getText().toString());
             if (useDeclination) {
                 angleDegrees = GeoCalc.correctDeclination(angleDegrees, declination);
             }
-            double angleRadians = Math.toRadians(angleDegrees);
 
-            LatLon projectionLatLon = GeoCalc.projection(new LatLon(lat, lon), distance, angleRadians);
+            LatLon projectionLatLon = GeoCalc.projection(new LatLon(lat, lon), distance, angleDegrees);
 
             double doubleLat = new BigDecimal(projectionLatLon.latitude).setScale(8, BigDecimal.ROUND_HALF_UP).doubleValue();
             double doubleLon = new BigDecimal(projectionLatLon.longitude).setScale(8, BigDecimal.ROUND_HALF_UP).doubleValue();
